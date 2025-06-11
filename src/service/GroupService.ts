@@ -73,7 +73,7 @@ class GroupService extends Service {
           method: "POST",
         }
       );
-      if (response.status !== 204) {
+      if (!response.ok) {
         const error = await response.text();
         throw new ApiServiceError(error, response.status);
       }
@@ -93,7 +93,7 @@ class GroupService extends Service {
           method: "DELETE",
         }
       );
-      if (response.status !== 200) {
+      if (!response.ok) {
         const error = await response.text();
         throw new ApiServiceError(error, response.status);
       }

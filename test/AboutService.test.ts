@@ -14,7 +14,7 @@ describe('AboutService', () => {
 
   describe('aboutServer', () => {
     it('should return AboutInfo on successful fetch', async () => {
-      const mockAboutInfo: AboutInfo = { version: '1.0.0', build: '123' };
+      const mockAboutInfo: AboutInfo = { version: '1.0.0', build: 123 };
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => mockAboutInfo,

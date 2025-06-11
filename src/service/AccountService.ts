@@ -1,11 +1,6 @@
 import { ApiServiceError } from "../errors/ApiServiceError";
-import { SetPinRequest, UpdateAccountSettingsRequest } from "../types/Account";
+import { SetPinRequest, UpdateAccountSettingsRequest, UsernameInfo } from "../types/Account";
 import { Service } from "./Service";
-
-interface UsernameInfo {
-  username?: string;
-  username_link?: string;
-}
 
 class AccountService extends Service {
   getAccounts = async (): Promise<string[]> => {
@@ -34,6 +29,10 @@ class AccountService extends Service {
           body: JSON.stringify({ username: newName }),
         }
       );
+      if (!response.ok) {
+        const error = await response.text();
+        throw new ApiServiceError(error, response.status);
+      }
       return (await response.json()) as UsernameInfo;
     } catch (e) {
       throw this.unknownError(e);
@@ -42,9 +41,13 @@ class AccountService extends Service {
 
   deleteUsername = async (number: string): Promise<void> => {
     try {
-      fetch(this.getAPI() + "/v1/accounts/" + number + "/username", {
+      const response = await fetch(this.getAPI() + "/v1/accounts/" + number + "/username", {
         method: "DELETE",
       });
+      if (!response.ok) {
+        const error = await response.text();
+        throw new ApiServiceError(error, response.status);
+      }
     } catch (e) {
       throw this.unknownError(e);
     }
@@ -83,7 +86,7 @@ class AccountService extends Service {
           body: JSON.stringify(pin),
         }
       );
-      if (response.status !== 201) {
+      if (!response.ok) {
         const error = await response.text();
         throw new ApiServiceError(error, response.status);
       }
@@ -95,7 +98,7 @@ class AccountService extends Service {
   removePin = async (number: string): Promise<void> => {
     try {
       const response = await fetch(
-        this.getAPI() + "/v1/accounts" + number + "/pin",
+        this.getAPI() + "/v1/accounts/" + number + "/pin",
         {
           method: "DELETE",
         }

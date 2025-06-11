@@ -15,4 +15,4 @@ describe('Service', () => {
     service.setAPI(newApiUrl);
     expect(service.getAPI()).toBe(newApiUrl);
   });
-);
+});

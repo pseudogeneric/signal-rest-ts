@@ -11,7 +11,7 @@ class MessageService extends Service {
         method: "POST",
         body: JSON.stringify(message),
       });
-      if (response.status !== 201) {
+      if (!response.ok) {
         const error = await response.text();
         throw new ApiServiceError(error, response.status);
       }

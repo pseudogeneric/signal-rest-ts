@@ -16,7 +16,15 @@ class Service {
   };
 
   unknownError = (e: any): never => {
-    throw new ApiServiceError(e || "Unknown Error", -1);
+    let message = "Unknown Error";
+    if (e) {
+      if (e instanceof Error) {
+        message = e.message;
+      } else {
+        message = String(e);
+      }
+    }
+    throw new ApiServiceError(message, -1);
   };
 }
 

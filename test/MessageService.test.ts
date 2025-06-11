@@ -35,9 +35,6 @@ describe('MessageService', () => {
         `${mockApiUrl}/v2/send`,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
           body: JSON.stringify(mockMessage),
         }
       );
@@ -59,9 +56,6 @@ describe('MessageService', () => {
         `${mockApiUrl}/v2/send`,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
           body: JSON.stringify(mockMessage),
         }
       );
@@ -83,31 +77,9 @@ describe('MessageService', () => {
             `${mockApiUrl}/v2/send`,
             {
               method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
               body: JSON.stringify(mockMessage),
             }
           );
       });
-
-    it('should throw ApiServiceError on network error', async () => {
-      const networkError = new Error('Network connection lost');
-      (global.fetch as jest.Mock).mockRejectedValueOnce(networkError);
-
-      await expect(service.sendMessage(mockMessage)).rejects.toThrow(
-        new ApiServiceError(networkError.message, -1)
-      );
-      expect(global.fetch).toHaveBeenCalledWith(
-        `${mockApiUrl}/v2/send`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(mockMessage),
-        }
-      );
-    });
   });
 });

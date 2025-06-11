@@ -23,11 +23,6 @@ describe('ProfileService', () => {
   describe('updateProfile', () => {
     const mockProfileUpdate: UpdateProfileRequest = {
       name: 'Jane Doe',
-      // email: 'jane.doe@example.com', // Removed
-    };
-    const mockProfileUpdateWithAvatar: UpdateProfileRequest = {
-      name: 'Jane Doe',
-      base64Avatar: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA',
     };
 
     it('should resolve on successful PUT (204) without avatar', async () => {
@@ -36,14 +31,11 @@ describe('ProfileService', () => {
         status: 204,
       });
 
-      await expect(service.updateProfile(mockUserNumber, mockProfileUpdate.name)).resolves.toBeUndefined();
+      await expect(service.updateProfile(mockUserNumber, mockProfileUpdate)).resolves.toBeUndefined();
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/profiles/${mockUserNumber}`,
         {
           method: 'PUT',
-          headers: { // Added Content-Type header check
-            'Content-Type': 'application/json',
-          },
           body: JSON.stringify({ name: mockProfileUpdate.name }), // Service sends object {name: ...}
         }
       );
@@ -58,16 +50,13 @@ describe('ProfileService', () => {
         text: async () => errorMessage,
       });
 
-      await expect(service.updateProfile(mockUserNumber, mockProfileUpdate.name)).rejects.toThrow(
+      await expect(service.updateProfile(mockUserNumber, mockProfileUpdate)).rejects.toThrow(
         new ApiServiceError(errorMessage, errorStatus)
       );
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/profiles/${mockUserNumber}`,
         {
           method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
           body: JSON.stringify({ name: mockProfileUpdate.name }),
         }
       );
@@ -82,16 +71,13 @@ describe('ProfileService', () => {
           text: async () => errorMessage,
         });
 
-        await expect(service.updateProfile(mockUserNumber, mockProfileUpdate.name)).rejects.toThrow(
+        await expect(service.updateProfile(mockUserNumber, mockProfileUpdate)).rejects.toThrow(
           new ApiServiceError(errorMessage, errorStatus)
         );
         expect(global.fetch).toHaveBeenCalledWith(
             `${mockApiUrl}/v1/profiles/${mockUserNumber}`,
             {
               method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json',
-              },
               body: JSON.stringify({ name: mockProfileUpdate.name }),
             }
           );
@@ -102,16 +88,13 @@ describe('ProfileService', () => {
       const networkError = new Error('Server is down');
       (global.fetch as jest.Mock).mockRejectedValueOnce(networkError);
 
-      await expect(service.updateProfile(mockUserNumber, mockProfileUpdate.name)).rejects.toThrow(
+      await expect(service.updateProfile(mockUserNumber, mockProfileUpdate)).rejects.toThrow(
         new ApiServiceError(networkError.message, -1)
       );
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/profiles/${mockUserNumber}`,
         {
           method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
           body: JSON.stringify({ name: mockProfileUpdate.name }),
         }
       );

@@ -24,12 +24,14 @@
     "test": "jest",
     "build": "node build.mjs",
     "types": "tsc -p tsconfig.json --emitDeclarationOnly",
-    "clean": "rm -rf dist/"
+    "clean": "rm -rf dist/",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",
     "@types/node": "^24.0.0",
     "esbuild": "0.25.5",
+    "git-format-staged": "^3.1.1",
     "jest": "^29.7.0",
     "ts-jest": "^29.3.4",
     "tslib": "^2.8.1"

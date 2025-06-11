@@ -1,13 +1,23 @@
 class Service {
+  API = "";
+
+  constructor(api: string) {
+    this.setAPI(api);
+  }
+
   getAPI = () => {
-    return API;
+    return this.API;
   };
 
-  unknownError = (): APIError => {
-    return {message: "Unknown Error", statusCode: -1};
-  }
+  setAPI = (api: string): void => {
+    this.API = api;
+  };
+
+  unknownError = (e: any): APIError => {
+    return {message: e || "Unknown Error", statusCode: -1};
+  };
 }
 
-const API = "http://192.168.1.50:8080";
+
 
 export { Service };

@@ -23,7 +23,7 @@ class GroupService extends Service {
         return { message: error, statusCode: response.status } as APIError;
       }
     } catch (e) {
-      return this.unknownError();
+      return this.unknownError(e);
     }
   };
 
@@ -37,7 +37,7 @@ class GroupService extends Service {
         return { message: error, statusCode: response.status } as APIError;
       }
     } catch (e) {
-      return this.unknownError();
+      return this.unknownError(e);
     }
   };
 
@@ -57,7 +57,7 @@ class GroupService extends Service {
         return { message: error, statusCode: response.status } as APIError;
       }
     } catch (e) {
-      return this.unknownError();
+      return this.unknownError(e);
     }
   };
 
@@ -77,7 +77,7 @@ class GroupService extends Service {
         return { message: error, statusCode: response.status } as APIError;
       }
     } catch (e) {
-      return this.unknownError();
+      return this.unknownError(e);
     }
   };
 
@@ -97,7 +97,7 @@ class GroupService extends Service {
         return { message: error, statusCode: response.status } as APIError;
       }
     } catch (e) {
-      return this.unknownError();
+      return this.unknownError(e);
     }
   };
 
@@ -119,7 +119,7 @@ class GroupService extends Service {
         return { message: error, statusCode: response.status } as APIError;
       }
     } catch (e) {
-      return this.unknownError();
+      return this.unknownError(e);
     }
   };
 
@@ -141,7 +141,7 @@ class GroupService extends Service {
         return { message: error, statusCode: response.status } as APIError;
       }
     } catch (e) {
-      return this.unknownError();
+      return this.unknownError(e);
     }
   };
 

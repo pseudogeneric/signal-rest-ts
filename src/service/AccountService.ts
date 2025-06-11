@@ -20,7 +20,7 @@ class AccountService extends Service {
         } as APIError;
       }
     } catch (e) {
-      return this.unknownError();
+      return this.unknownError(e);
     }
   };
 
@@ -38,7 +38,7 @@ class AccountService extends Service {
       );
       return (await response.json()) as UsernameInfo;
     } catch (e) {
-      return this.unknownError();
+      return this.unknownError(e);
     }
   };
 
@@ -48,7 +48,7 @@ class AccountService extends Service {
         method: "DELETE",
       });
     } catch (e) {
-      return this.unknownError();
+      return this.unknownError(e);
     }
   };
 
@@ -69,7 +69,7 @@ class AccountService extends Service {
         return { message: error, statusCode: response.status } as APIError;
       }
     } catch (e) {
-      return this.unknownError();
+      return this.unknownError(e);
     }
   };
 
@@ -90,7 +90,7 @@ class AccountService extends Service {
         return { message: error, statusCode: response.status } as APIError;
       }
     } catch (e) {
-      return this.unknownError();
+      return this.unknownError(e);
     }
   };
 
@@ -107,7 +107,7 @@ class AccountService extends Service {
         return { message: error, statusCode: response.status } as APIError;
       }
     } catch (e) {
-      return this.unknownError();
+      return this.unknownError(e);
     }
   };
 

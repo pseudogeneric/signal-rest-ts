@@ -7,7 +7,7 @@ class AboutService extends Service {
       const response = fetch(this.getAPI() + "/v1/about");
       return (await response).json() as AboutInfo;
     } catch (e) {
-      return this.unknownError();
+      return this.unknownError(e);
     }
   };
 }

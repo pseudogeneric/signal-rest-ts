@@ -13,7 +13,7 @@
   "types": "dist/lib.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "esbuild index.ts --bundle --outfile=dist/index.js",
+    "build": "esbuild src/index.ts --bundle --outfile=dist/index.js",
     "types": "tsc --emitDeclarationOnly -d .",
     "clean": "rm -rf dist/"
   },

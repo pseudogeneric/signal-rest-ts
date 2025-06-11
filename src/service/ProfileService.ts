@@ -1,5 +1,6 @@
 import { Service } from "./Service";
 import { ApiServiceError } from "../errors/ApiServiceError";
+import { UpdateProfileRequest } from "../types/Profile";
 
 class ProfileService extends Service {
   updateProfile = async (

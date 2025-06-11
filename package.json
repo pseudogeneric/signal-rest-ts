@@ -4,17 +4,26 @@
   "description": "ts wrapper around signal-cli-rest-api",
   "license": "MIT",
   "author": "Grant Bacon",
-  "type": "commonjs",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@g.l5.ca:2222/srv/git/signal-web.git"
   },
   "main": "dist/index.js",
-  "types": "dist/lib.d.ts",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "test": "jest",
-    "build": "esbuild src/index.ts --bundle --outfile=dist/index.js",
-    "types": "tsc --emitDeclarationOnly -d .",
+    "build": "node build.mjs",
+    "types": "tsc -p tsconfig.json --emitDeclarationOnly",
     "clean": "rm -rf dist/"
   },
   "devDependencies": {

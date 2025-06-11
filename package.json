@@ -7,7 +7,7 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@g.l5.ca:2222/srv/git/signal-web.git"
+    "url": "https://github.com/grantbacon/signal-rest-ts.git"
   },
   "main": "dist/index.js",
   "module": "dist/index.mjs",

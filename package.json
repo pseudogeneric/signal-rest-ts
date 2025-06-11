@@ -1,0 +1,23 @@
+{
+  "name": "signal-web",
+  "version": "0.0.1",
+  "description": "ts wrapper around signal-cli-rest-api",
+  "license": "GPL-3.0-only",
+  "author": "Grant Bacon",
+  "type": "commonjs",
+  "repository": "git+https://g.l5.ca:2222/srv/signal-web.git",
+  "main": "dist/index.js",
+  "types": "dist/lib.d.ts",
+  "directories": {
+    "lib": "./dist"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "esbuild index.ts --bundle --outfile=build/signal-web.js"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "esbuild": "0.25.5",
+    "tslib": "^2.8.1"
+  }
+}

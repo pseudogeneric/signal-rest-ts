@@ -47,5 +47,11 @@
     "setupFilesAfterEnv": [
       "<rootDir>/test/setup.ts"
     ]
-  }
+  },
+  "keywords": [
+    "signal",
+    "messenger",
+    "signal-cli-rest-api",
+    "rest-api"
+  ]
 }

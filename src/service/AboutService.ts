@@ -8,6 +8,7 @@ class AboutService extends Service {
       const response = await fetch(this.getAPI() + "/v1/about");
       if (!response.ok) {
         const errorText = await response.text();
+
         throw new ApiServiceError(errorText, response.status);
       }
       return response.json() as AboutInfo;

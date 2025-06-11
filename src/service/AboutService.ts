@@ -1,6 +1,5 @@
 import { Service } from "./Service";
 import { AboutInfo } from "../types/About";
-import ApiServiceError from "../errors/ApiServiceError";
 
 class AboutService extends Service {
   aboutServer = async (): Promise<AboutInfo> => {

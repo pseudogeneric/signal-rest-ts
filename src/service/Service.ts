@@ -1,4 +1,4 @@
-import ApiServiceError from "../errors/ApiServiceError";
+import { ApiServiceError } from "../errors/ApiServiceError";
 
 class Service {
   API = "";

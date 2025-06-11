@@ -1,6 +1,5 @@
 import { Service } from "./Service";
-import ApiServiceError from "../errors/ApiServiceError";
-import { UpdateProfileRequest } from "../types/Profile"; // Assuming this path
+import { ApiServiceError } from "../errors/ApiServiceError";
 
 class ProfileService extends Service {
   updateProfile = async (
@@ -8,7 +7,7 @@ class ProfileService extends Service {
     profileUpdate: UpdateProfileRequest
   ): Promise<void> => {
     try {
-      const response = await fetch(this.getAPI() + "/v1/profiles/" + number, { // Added missing slash
+      const response = await fetch(this.getAPI() + "/v1/profiles/" + number, {
         method: "PUT",
         body: JSON.stringify(profileUpdate),
       });
@@ -17,7 +16,7 @@ class ProfileService extends Service {
         throw new ApiServiceError(error, response.status);
       }
     } catch (e) {
-        throw this.unknownError(e); // Pass error and throw
+        throw this.unknownError(e);
     }
   };
 }

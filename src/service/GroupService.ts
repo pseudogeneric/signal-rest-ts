@@ -6,7 +6,7 @@ import {
   UpdateGroupRequest,
 } from "../types/Group";
 import { Service } from "./Service";
-import ApiServiceError from "../errors/ApiServiceError";
+import { ApiServiceError } from "../errors/ApiServiceError";
 
 class GroupService extends Service {
   getGroup = async (

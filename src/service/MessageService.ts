@@ -1,6 +1,6 @@
 import { SendMessageResponse, SendMessageV2 } from "../types/Message";
 import { Service } from "./Service";
-import ApiServiceError from "../errors/ApiServiceError";
+import { ApiServiceError } from "../errors/ApiServiceError";
 
 class MessageService extends Service {
   sendMessage = async (

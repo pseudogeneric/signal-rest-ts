@@ -1,4 +1,4 @@
-import ApiServiceError from "../errors/ApiServiceError";
+import { ApiServiceError } from "../errors/ApiServiceError";
 import { SetPinRequest, UpdateAccountSettingsRequest } from "../types/Account";
 import { Service } from "./Service";
 

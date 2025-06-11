@@ -8,4 +8,4 @@ class ApiServiceError extends Error {
   }
 }
 
-export default ApiServiceError;
+export { ApiServiceError };

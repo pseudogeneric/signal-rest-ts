@@ -1,10 +1,9 @@
-import esbuild from 'esbuild';
-import fs from 'fs/promises';
+import esbuild from "esbuild";
+import fs from "fs/promises";
 
-const entryPoint = 'src/index.ts';
-const outDir = 'dist';
+const entryPoint = "src/index.ts";
+const outDir = "dist";
 
-// Ensure the output directory exists
 await fs.mkdir(outDir, { recursive: true });
 
 // Library Build (ESM and CJS)
@@ -12,21 +11,21 @@ const libraryBuildConfig = {
   entryPoints: [entryPoint],
   bundle: true,
   sourcemap: true,
-  platform: 'node', // Keep platform as node for CJS/ESM library compatibility
-  external: [], // Specify external dependencies if any, otherwise bundle all
+  platform: "node",
+  external: [],
 };
 
 // ESM Build
 await esbuild.build({
   ...libraryBuildConfig,
-  format: 'esm',
+  format: "esm",
   outfile: `${outDir}/index.mjs`,
 });
 
 // CJS Build
 await esbuild.build({
   ...libraryBuildConfig,
-  format: 'cjs',
+  format: "cjs",
   outfile: `${outDir}/index.js`,
 });
 
@@ -35,15 +34,14 @@ await esbuild.build({
   entryPoints: [entryPoint],
   bundle: true,
   outfile: `${outDir}/signal-web.js`,
-  format: 'iife',
-  globalName: 'SignalClientTmp', // Temporary global name
+  format: "iife",
+  globalName: "SignalClientTmp",
   sourcemap: true,
   minify: true,
-  platform: 'browser', // Target browser environment
+  platform: "browser",
   footer: {
-    // This assigns the SignalClient export to window.SignalClient
-    js: 'window.SignalClient = SignalClientTmp.SignalClient;',
+    js: "window.SignalClient = SignalClientTmp.SignalClient;",
   },
 });
 
-console.log('Build complete!');
+console.log("Build complete!");

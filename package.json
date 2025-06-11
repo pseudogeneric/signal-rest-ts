@@ -1,7 +1,7 @@
 {
-  "name": "signal-web",
+  "name": "signal-rest-ts",
   "version": "0.0.1",
-  "description": "ts wrapper around signal-cli-rest-api",
+  "description": "typescript wrapper around signal-cli-rest-api",
   "license": "MIT",
   "author": "Grant Bacon",
   "type": "module",

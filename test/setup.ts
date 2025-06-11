@@ -1,4 +1,5 @@
-// src/service/tests/setup.ts
+export {};
+
 declare global {
   namespace NodeJS {
     interface Global {

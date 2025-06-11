@@ -1,7 +1,7 @@
 // src/service/tests/GroupService.test.ts
-import { GroupService } from '../GroupService';
-import { ApiServiceError } from '../../errors/ApiServiceError';
-import { Group, CreateGroupRequest, CreateGroupResponse, UpdateGroupRequest, ChangeGroupAdminsRequest } from '../../types/Group';
+import { GroupService } from '../src/service/GroupService';
+import { ApiServiceError } from '../src/errors/ApiServiceError';
+import { Group, CreateGroupRequest, CreateGroupResponse, UpdateGroupRequest, ChangeGroupAdminsRequest } from '../src/types/Group';
 
 describe('GroupService', () => {
   let service: GroupService;
@@ -17,7 +17,7 @@ describe('GroupService', () => {
   // --- getGroup ---
   describe('getGroup', () => {
     it('should return group details on successful fetch', async () => {
-      const mockGroup: Group = { id: mockGroupId, name: 'Test Group', members: ['member1'], blocked: false, pending_members: [], requesting_members: [] };
+      const mockGroup: Group = { id: mockGroupId, name: 'Test Group', members: ['member1'], blocked: false, pending_invites: [], pending_requests: [] };
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         status: 200,
@@ -59,8 +59,8 @@ describe('GroupService', () => {
   describe('getGroups', () => {
     it('should return list of groups on successful fetch', async () => {
       const mockGroups: Group[] = [
-        { id: 'group1', name: 'Group One', members: [], blocked: false, pending_members: [], requesting_members: [] },
-        { id: 'group2', name: 'Group Two', members: [], blocked: false, pending_members: [], requesting_members: [] },
+        { id: 'group1', name: 'Group One', members: [], blocked: false, pending_invites: [], pending_requests: [] },
+        { id: 'group2', name: 'Group Two', members: [], blocked: false, pending_invites: [], pending_requests: [] },
       ];
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
@@ -101,8 +101,8 @@ describe('GroupService', () => {
 
   // --- createGroup ---
   describe('createGroup', () => {
-    const groupRequest: CreateGroupRequest = { name: 'New Group', members: ['member1'] };
-    const groupResponse: CreateGroupResponse = { id: 'newGroupId', ...groupRequest, blocked: false, pending_members: [], requesting_members: [] };
+    const groupRequest: CreateGroupRequest = { name: 'New Group', members: ['member1'], group_link: "disabled" };
+    const groupResponse: CreateGroupResponse = { id: 'newGroupId' };
 
     it('should return created group info on successful POST (201)', async () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({

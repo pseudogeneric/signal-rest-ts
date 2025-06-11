@@ -1,7 +1,7 @@
 // src/service/tests/AccountService.test.ts
-import { AccountService } from '../AccountService';
-import { ApiServiceError } from '../../errors/ApiServiceError';
-import { SetPinRequest, UpdateAccountSettingsRequest, UsernameInfo } from '../../types/Account';
+import { AccountService } from '../src/service/AccountService';
+import { ApiServiceError } from '../src/errors/ApiServiceError';
+import { SetPinRequest, UpdateAccountSettingsRequest, UsernameInfo } from '../src/types/Account';
 
 describe('AccountService', () => {
   let service: AccountService;

@@ -1,7 +1,7 @@
 // src/service/tests/MessageService.test.ts
-import { MessageService } from '../MessageService';
-import { ApiServiceError } from '../../errors/ApiServiceError';
-import { SendMessageV2, SendMessageResponse } from '../../types/Message';
+import { MessageService } from '../src/service/MessageService';
+import { ApiServiceError } from '../src/errors/ApiServiceError';
+import { SendMessageV2, SendMessageResponse } from '../src/types/Message';
 
 describe('MessageService', () => {
   let service: MessageService;
@@ -15,22 +15,11 @@ describe('MessageService', () => {
   describe('sendMessage', () => {
     const mockMessage: SendMessageV2 = {
       message: 'Hello world',
-      recipient_numbers: ['+1234567890'],
-      sender_number: '+0987654321',
+      recipients: ['+1234567890'],
+      number: '+0987654321',
     };
     const mockResponse: SendMessageResponse = {
-      // Assuming the actual response structure, adjust as necessary
-      // For example, it might include timestamps, specific results per recipient, etc.
-      // Based on the example, it's a simple object.
-      // Let's assume the API returns an array of results, one for each recipient.
-      results: [
-        {
-            recipient_number: '+1234567890',
-            message_id: 'msg_123',
-            status: 'sent',
-            error: null
-        }
-      ]
+      timestamp: '0'
     };
 
     it('should return SendMessageResponse on successful POST (201)', async () => {

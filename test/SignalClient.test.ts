@@ -1,9 +1,9 @@
-import { SignalClient } from './SignalClient';
-import { AboutService } from './service/AboutService';
-import { AccountService } from './service/AccountService';
-import { GroupService } from './service/GroupService';
-import { MessageService } from './service/MessageService';
-import { ProfileService } from './service/ProfileService';
+import { SignalClient } from '../src/SignalClient';
+import { AboutService } from '../src/service/AboutService';
+import { AccountService } from '../src/service/AccountService';
+import { GroupService } from '../src/service/GroupService';
+import { MessageService } from '../src/service/MessageService';
+import { ProfileService } from '../src/service/ProfileService';
 
 describe('SignalClient', () => {
   const mockApiPath = 'http://localhost:8080';
@@ -16,7 +16,7 @@ describe('SignalClient', () => {
   it('should create and return an instance of AboutService', () => {
     const aboutService = client.about();
     expect(aboutService).toBeInstanceOf(AboutService);
-    // Test if it's a singleton (returns the same instance)
+    
     const anotherAboutService = client.about();
     expect(anotherAboutService).toBe(aboutService);
   });

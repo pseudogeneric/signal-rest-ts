@@ -1,10 +1,11 @@
 import { SendMessageResponse, SendMessageV2 } from "../types/Message";
 import { Service } from "./Service";
+import ApiServiceError from "../errors/ApiServiceError";
 
 class MessageService extends Service {
   sendMessage = async (
     message: SendMessageV2
-  ): Promise<SendMessageResponse | APIError> => {
+  ): Promise<SendMessageResponse> => {
     try {
       const response = await fetch(this.getAPI() + "/v2/send", {
         method: "POST",
@@ -12,11 +13,11 @@ class MessageService extends Service {
       });
       if (response.status !== 201) {
         const error = await response.text();
-        return { message: error, statusCode: response.status } as APIError;
+        throw new ApiServiceError(error, response.status);
       }
       return await response.json() as SendMessageResponse;
     } catch (e) {
-      return this.unknownError(e);
+      throw this.unknownError(e);
     }
   };
 }

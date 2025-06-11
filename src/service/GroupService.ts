@@ -6,12 +6,13 @@ import {
   UpdateGroupRequest,
 } from "../types/Group";
 import { Service } from "./Service";
+import ApiServiceError from "../errors/ApiServiceError";
 
 class GroupService extends Service {
   getGroup = async (
     num: string,
     groupId: string
-  ): Promise<Group | APIError> => {
+  ): Promise<Group> => {
     try {
       const response = await fetch(
         this.getAPI() + "/v1/groups/" + num + "/" + groupId
@@ -20,31 +21,31 @@ class GroupService extends Service {
         return (await response.json()) as Group;
       } else {
         const error = await response.text();
-        return { message: error, statusCode: response.status } as APIError;
+        throw new ApiServiceError(error, response.status);
       }
     } catch (e) {
-      return this.unknownError(e);
+      throw this.unknownError(e);
     }
   };
 
-  getGroups = async (num: string): Promise<Group[] | APIError> => {
+  getGroups = async (num: string): Promise<Group[]> => {
     try {
       const response = await fetch(this.getAPI() + "/v1/groups/" + num);
       if (response.status === 200) {
         return (await response.json()) as Group[];
       } else {
         const error = await response.text();
-        return { message: error, statusCode: response.status } as APIError;
+        throw new ApiServiceError(error, response.status);
       }
     } catch (e) {
-      return this.unknownError(e);
+      throw this.unknownError(e);
     }
   };
 
   createGroup = async (
     number: string,
     groupDescriptor: CreateGroupRequest
-  ): Promise<CreateGroupResponse | APIError> => {
+  ): Promise<CreateGroupResponse> => {
     try {
       const response = await fetch(this.getAPI() + "/v1/groups/" + number, {
         method: "POST",
@@ -54,17 +55,17 @@ class GroupService extends Service {
         return (await response.json()) as CreateGroupResponse;
       } else {
         const error = await response.text();
-        return { message: error, statusCode: response.status } as APIError;
+        throw new ApiServiceError(error, response.status);
       }
     } catch (e) {
-      return this.unknownError(e);
+      throw this.unknownError(e);
     }
   };
 
   quitGroup = async (
     number: string,
     groupId: string
-  ): Promise<void | APIError> => {
+  ): Promise<void> => {
     try {
       const response = await fetch(
         this.getAPI() + "/v1/groups/" + number + "/" + groupId + "/quit",
@@ -74,17 +75,17 @@ class GroupService extends Service {
       );
       if (response.status !== 204) {
         const error = await response.text();
-        return { message: error, statusCode: response.status } as APIError;
+        throw new ApiServiceError(error, response.status);
       }
     } catch (e) {
-      return this.unknownError(e);
+      throw this.unknownError(e);
     }
   };
 
   deleteGroup = async (
     number: string,
     groupId: string
-  ): Promise<void | APIError> => {
+  ): Promise<void> => {
     try {
       const response = await fetch(
         this.getAPI() + "/v1/groups/" + number + "/" + groupId,
@@ -94,10 +95,10 @@ class GroupService extends Service {
       );
       if (response.status !== 200) {
         const error = await response.text();
-        return { message: error, statusCode: response.status } as APIError;
+        throw new ApiServiceError(error, response.status);
       }
     } catch (e) {
-      return this.unknownError(e);
+      throw this.unknownError(e);
     }
   };
 
@@ -105,7 +106,7 @@ class GroupService extends Service {
     number: string,
     groupId: string,
     groupUpdate: UpdateGroupRequest
-  ) => {
+  ): Promise<void> => {
     try {
       const response = await fetch(
         this.getAPI() + "/v1/groups/" + number + "/" + groupId,
@@ -116,10 +117,10 @@ class GroupService extends Service {
       );
       if (response.status !== 204) {
         const error = await response.text();
-        return { message: error, statusCode: response.status } as APIError;
+        throw new ApiServiceError(error, response.status);
       }
     } catch (e) {
-      return this.unknownError(e);
+      throw this.unknownError(e);
     }
   };
 
@@ -127,7 +128,7 @@ class GroupService extends Service {
     number: string,
     groupId: string,
     admins: ChangeGroupAdminsRequest
-  ): Promise<void | APIError> => {
+  ): Promise<void> => {
     try {
       const response = await fetch(
         this.getAPI() + "/v1/groups/" + number + "/" + groupId + "/admins",
@@ -138,10 +139,10 @@ class GroupService extends Service {
       );
       if (response.status !== 204) {
         const error = await response.text();
-        return { message: error, statusCode: response.status } as APIError;
+        throw new ApiServiceError(error, response.status);
       }
     } catch (e) {
-      return this.unknownError(e);
+      throw this.unknownError(e);
     }
   };
 
@@ -149,7 +150,7 @@ class GroupService extends Service {
     number: string,
     groupId: string,
     admins: ChangeGroupAdminsRequest
-  ): Promise<void | APIError> => {
+  ): Promise<void> => {
     try {
       const response = await fetch(
         this.getAPI() + "/v1/groups/" + number + "/" + groupId + "/admins",
@@ -160,10 +161,10 @@ class GroupService extends Service {
       );
       if (response.status !== 204) {
         const error = await response.text();
-        return { message: error, statusCode: response.status } as APIError;
+        throw new ApiServiceError(error, response.status);
       }
     } catch (e) {
-      this.unknownError();
+      throw this.unknownError(e);
     }
   };
 }

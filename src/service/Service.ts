@@ -1,3 +1,5 @@
+import ApiServiceError from "../errors/ApiServiceError";
+
 class Service {
   API = "";
 
@@ -13,8 +15,8 @@ class Service {
     this.API = api;
   };
 
-  unknownError = (e: any): APIError => {
-    return {message: e || "Unknown Error", statusCode: -1};
+  unknownError = (e: any): never => {
+    throw new ApiServiceError(e || "Unknown Error", -1);
   };
 }
 

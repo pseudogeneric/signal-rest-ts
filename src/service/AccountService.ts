@@ -1,3 +1,4 @@
+import ApiServiceError from "../errors/ApiServiceError";
 import { SetPinRequest, UpdateAccountSettingsRequest } from "../types/Account";
 import { Service } from "./Service";
 
@@ -7,27 +8,24 @@ interface UsernameInfo {
 }
 
 class AccountService extends Service {
-  getAccounts = async (): Promise<string[] | APIError> => {
+  getAccounts = async (): Promise<string[]> => {
     try {
       const response = await fetch(this.getAPI() + "/v1/accounts");
       if (response.status === 200) {
         return (await response.json()) as string[];
       } else {
         const errorMessage = await response.text();
-        return {
-          message: errorMessage,
-          statusCode: response.status,
-        } as APIError;
+        throw new ApiServiceError(errorMessage, response.status);
       }
     } catch (e) {
-      return this.unknownError(e);
+      throw this.unknownError(e);
     }
   };
 
   setUsername = async (
     number: string,
     newName: string
-  ): Promise<UsernameInfo | APIError> => {
+  ): Promise<UsernameInfo> => {
     try {
       const response = await fetch(
         this.getAPI() + "/v1/accounts/" + number + "/username",
@@ -38,24 +36,24 @@ class AccountService extends Service {
       );
       return (await response.json()) as UsernameInfo;
     } catch (e) {
-      return this.unknownError(e);
+      throw this.unknownError(e);
     }
   };
 
-  deleteUsername = async (number: string): Promise<void | APIError> => {
+  deleteUsername = async (number: string): Promise<void> => {
     try {
       fetch(this.getAPI() + "/v1/accounts/" + number + "/username", {
         method: "DELETE",
       });
     } catch (e) {
-      return this.unknownError(e);
+      throw this.unknownError(e);
     }
   };
 
   updateAccountSettings = async (
     number: string,
     updateSettings: UpdateAccountSettingsRequest
-  ): Promise<void | APIError> => {
+  ): Promise<void> => {
     try {
       const response = await fetch(
         this.getAPI() + "/v1/accounts/" + number + "/settings",
@@ -66,17 +64,17 @@ class AccountService extends Service {
       );
       if (response.status !== 204) {
         const error = await response.text();
-        return { message: error, statusCode: response.status } as APIError;
+        throw new ApiServiceError(error, response.status);
       }
     } catch (e) {
-      return this.unknownError(e);
+      throw this.unknownError(e);
     }
   };
 
   setPin = async (
     number: string,
     pin: SetPinRequest
-  ): Promise<void | APIError> => {
+  ): Promise<void> => {
     try {
       const response = await fetch(
         this.getAPI() + "/v1/accounts/" + number + "/pin",
@@ -87,14 +85,14 @@ class AccountService extends Service {
       );
       if (response.status !== 201) {
         const error = await response.text();
-        return { message: error, statusCode: response.status } as APIError;
+        throw new ApiServiceError(error, response.status);
       }
     } catch (e) {
-      return this.unknownError(e);
+      throw this.unknownError(e);
     }
   };
 
-  removePin = async (number: string): Promise<void | APIError> => {
+  removePin = async (number: string): Promise<void> => {
     try {
       const response = await fetch(
         this.getAPI() + "/v1/accounts" + number + "/pin",
@@ -104,10 +102,10 @@ class AccountService extends Service {
       );
       if (response.status !== 204) {
         const error = await response.text();
-        return { message: error, statusCode: response.status } as APIError;
+        throw new ApiServiceError(error, response.status);
       }
     } catch (e) {
-      return this.unknownError(e);
+      throw this.unknownError(e);
     }
   };
 

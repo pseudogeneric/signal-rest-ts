@@ -12,7 +12,9 @@ npm install signal-rest-ts
 
 ## Usage
 
-### Get all group metadata, for all accounts
+### As a module
+
+#### Get all group metadata, for all accounts
 
 ```ts
 import { SignalClient } from "signal-rest-ts";
@@ -31,7 +33,7 @@ const getAllGroups = async () => {
 };
 ```
 
-### Send a message to a user
+#### Send a message to a user
 
 ```ts
 import { SignalClient } from "signal-rest-ts";
@@ -47,6 +49,22 @@ const sendMeAMessage = async () => {
   });
 };
 ```
+
+### DOM
+
+#### Target
+
+A version of the library bundled for the DOM is built to `dist/signal-web.js` in the default build script. This can be included using a script tag.
+
+```html
+<script type="text/javascript" src="signal-web.js"></script>
+```
+
+This will add `window.SignalClient` which exports the SignalClient class and can be instantiated to access the underlying services, as in the examples above.
+
+#### CORS
+
+Note that you will have to properly configure CORS, since requests to the endpoint are almost certainly going to be cross-origin. This is left as an exercise for the user. ;)
 
 ## License
 

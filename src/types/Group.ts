@@ -36,6 +36,10 @@ interface UpdateGroupRequest {
   name?: string;
 }
 
+interface ChangeGroupAdminsRequest {
+  admins: string[];
+}
+
 type GroupList = Group[];
 
-export { Group, GroupList, CreateGroupRequest, CreateGroupResponse, UpdateGroupRequest };
+export { Group, GroupList, CreateGroupRequest, CreateGroupResponse, UpdateGroupRequest, ChangeGroupAdminsRequest };

@@ -1,3 +1,4 @@
+import { SetPinRequest, UpdateAccountSettingsRequest } from "../types/Account";
 import { Service } from "./Service";
 
 interface UsernameInfo {
@@ -19,7 +20,7 @@ class AccountService extends Service {
         } as APIError;
       }
     } catch (e) {
-      return { message: "Unknown Error", statusCode: -1 } as APIError;
+      return this.unknownError();
     }
   };
 
@@ -37,7 +38,7 @@ class AccountService extends Service {
       );
       return (await response.json()) as UsernameInfo;
     } catch (e) {
-      return { message: "Unknown Error", statusCode: -1 } as APIError;
+      return this.unknownError();
     }
   };
 
@@ -47,9 +48,69 @@ class AccountService extends Service {
         method: "DELETE",
       });
     } catch (e) {
-      return { message: "Unknown Error", statusCode: -1 } as APIError;
+      return this.unknownError();
     }
   };
+
+  updateAccountSettings = async (
+    number: string,
+    updateSettings: UpdateAccountSettingsRequest
+  ): Promise<void | APIError> => {
+    try {
+      const response = await fetch(
+        this.getAPI() + "/v1/accounts/" + number + "/settings",
+        {
+          method: "PUT",
+          body: JSON.stringify(updateSettings),
+        }
+      );
+      if (response.status !== 204) {
+        const error = await response.text();
+        return { message: error, statusCode: response.status } as APIError;
+      }
+    } catch (e) {
+      return this.unknownError();
+    }
+  };
+
+  setPin = async (
+    number: string,
+    pin: SetPinRequest
+  ): Promise<void | APIError> => {
+    try {
+      const response = await fetch(
+        this.getAPI() + "/v1/accounts/" + number + "/pin",
+        {
+          method: "POST",
+          body: JSON.stringify(pin),
+        }
+      );
+      if (response.status !== 201) {
+        const error = await response.text();
+        return { message: error, statusCode: response.status } as APIError;
+      }
+    } catch (e) {
+      return this.unknownError();
+    }
+  };
+
+  removePin = async (number: string): Promise<void | APIError> => {
+    try {
+      const response = await fetch(
+        this.getAPI() + "/v1/accounts" + number + "/pin",
+        {
+          method: "DELETE",
+        }
+      );
+      if (response.status !== 204) {
+        const error = await response.text();
+        return { message: error, statusCode: response.status } as APIError;
+      }
+    } catch (e) {
+      return this.unknownError();
+    }
+  };
+
 }
 
 export { AccountService };

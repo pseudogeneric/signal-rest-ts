@@ -1,4 +1,10 @@
-import { CreateGroupRequest, CreateGroupResponse, Group, UpdateGroupRequest } from "../types/Group";
+import {
+  ChangeGroupAdminsRequest,
+  CreateGroupRequest,
+  CreateGroupResponse,
+  Group,
+  UpdateGroupRequest,
+} from "../types/Group";
 import { Service } from "./Service";
 
 class GroupService extends Service {
@@ -114,6 +120,50 @@ class GroupService extends Service {
       }
     } catch (e) {
       return this.unknownError();
+    }
+  };
+
+  addAdmins = async (
+    number: string,
+    groupId: string,
+    admins: ChangeGroupAdminsRequest
+  ): Promise<void | APIError> => {
+    try {
+      const response = await fetch(
+        this.getAPI() + "/v1/groups/" + number + "/" + groupId + "/admins",
+        {
+          method: "POST",
+          body: JSON.stringify(admins),
+        }
+      );
+      if (response.status !== 204) {
+        const error = await response.text();
+        return { message: error, statusCode: response.status } as APIError;
+      }
+    } catch (e) {
+      return this.unknownError();
+    }
+  };
+
+  deleteAdmins = async (
+    number: string,
+    groupId: string,
+    admins: ChangeGroupAdminsRequest
+  ): Promise<void | APIError> => {
+    try {
+      const response = await fetch(
+        this.getAPI() + "/v1/groups/" + number + "/" + groupId + "/admins",
+        {
+          method: "DELETE",
+          body: JSON.stringify(admins),
+        }
+      );
+      if (response.status !== 204) {
+        const error = await response.text();
+        return { message: error, statusCode: response.status } as APIError;
+      }
+    } catch (e) {
+      this.unknownError();
     }
   };
 }

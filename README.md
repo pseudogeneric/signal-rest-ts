@@ -50,6 +50,20 @@ const sendMeAMessage = async () => {
 };
 ```
 
+#### Reply to messages matching a regular expression
+
+```typescript
+const signal = new SignalClient("http://localhost:8080");
+const accounts = await signal.account().getAccounts();
+
+signal.receive().registerHandler(accounts[0], /^haha/, async (context) => {
+  console.log(context.sourceUuid + " -> " + context.message);
+  context.reply("What's so funny?");
+});
+
+signal.receive().startReceiving(accounts[0]);
+```
+
 ### DOM
 
 #### Target
@@ -64,8 +78,12 @@ This will add `window.SignalClient` which exports the SignalClient class and can
 
 #### CORS
 
-Note that you will have to properly configure CORS, since requests to the endpoint are almost certainly going to be cross-origin. This is left as an exercise for the user. ;)
+Note that you will have to properly configure CORS, since requests to the endpoint are almost certainly going to be cross-origin. This is left as an exercise for the user.
+
+## Contributions
+
+Contributions are welcome.
 
 ## License
 
-Released under MIT license
+Released as-is under MIT license with no warranties

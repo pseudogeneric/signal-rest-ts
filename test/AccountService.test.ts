@@ -6,14 +6,17 @@ import {
   UpdateAccountSettingsRequest,
   UsernameInfo,
 } from "../src/types/Account";
+import { SignalClient } from "../src/SignalClient";
 
 describe("AccountService", () => {
   let service: AccountService;
+  let client: SignalClient;
   const mockApiUrl = "http://fake-api.com";
   const mockNumber = "12345";
 
   beforeEach(() => {
-    service = new AccountService(mockApiUrl);
+    client = new SignalClient("");
+    service = new AccountService(mockApiUrl, client);
     (global.fetch as jest.Mock).mockClear();
   });
 
@@ -42,7 +45,7 @@ describe("AccountService", () => {
       });
 
       await expect(service.getAccounts()).rejects.toThrow(
-        new ApiServiceError(errorMessage, errorStatus)
+        new ApiServiceError(errorMessage, errorStatus),
       );
       expect(global.fetch).toHaveBeenCalledWith(`${mockApiUrl}/v1/accounts`);
     });
@@ -52,7 +55,7 @@ describe("AccountService", () => {
       (global.fetch as jest.Mock).mockRejectedValueOnce(networkError);
 
       await expect(service.getAccounts()).rejects.toThrow(
-        new ApiServiceError(networkError.message, -1)
+        new ApiServiceError(networkError.message, -1),
       );
       expect(global.fetch).toHaveBeenCalledWith(`${mockApiUrl}/v1/accounts`);
     });
@@ -80,7 +83,7 @@ describe("AccountService", () => {
         {
           method: "POST",
           body: JSON.stringify({ username: newName }),
-        }
+        },
       );
     });
 
@@ -94,14 +97,14 @@ describe("AccountService", () => {
       });
 
       await expect(service.setUsername(mockNumber, newName)).rejects.toThrow(
-        new ApiServiceError(errorMessage, errorStatus)
+        new ApiServiceError(errorMessage, errorStatus),
       );
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/accounts/${mockNumber}/username`,
         {
           method: "POST",
           body: JSON.stringify({ username: newName }),
-        }
+        },
       );
     });
 
@@ -123,7 +126,7 @@ describe("AccountService", () => {
         {
           method: "POST",
           body: JSON.stringify({ username: newName }),
-        }
+        },
       );
     });
 
@@ -135,13 +138,13 @@ describe("AccountService", () => {
         });
 
         await expect(
-          service.deleteUsername(mockNumber)
+          service.deleteUsername(mockNumber),
         ).resolves.toBeUndefined();
         expect(global.fetch).toHaveBeenCalledWith(
           `${mockApiUrl}/v1/accounts/${mockNumber}/username`,
           {
             method: "DELETE",
-          }
+          },
         );
       });
 
@@ -155,13 +158,13 @@ describe("AccountService", () => {
         });
 
         await expect(service.deleteUsername(mockNumber)).rejects.toThrow(
-          new ApiServiceError(errorMessage, errorStatus)
+          new ApiServiceError(errorMessage, errorStatus),
         );
         expect(global.fetch).toHaveBeenCalledWith(
           `${mockApiUrl}/v1/accounts/${mockNumber}/username`,
           {
             method: "DELETE",
-          }
+          },
         );
       });
 
@@ -175,16 +178,15 @@ describe("AccountService", () => {
         });
 
         await expect(service.deleteUsername(mockNumber)).rejects.toThrow(
-          new ApiServiceError(errorMessage, errorStatus)
+          new ApiServiceError(errorMessage, errorStatus),
         );
         expect(global.fetch).toHaveBeenCalledWith(
           `${mockApiUrl}/v1/accounts/${mockNumber}/username`,
           {
             method: "DELETE",
-          }
+          },
         );
       });
-
     });
 
     // --- updateAccountSettings ---
@@ -201,14 +203,14 @@ describe("AccountService", () => {
         });
 
         await expect(
-          service.updateAccountSettings(mockNumber, settings)
+          service.updateAccountSettings(mockNumber, settings),
         ).resolves.toBeUndefined();
         expect(global.fetch).toHaveBeenCalledWith(
           `${mockApiUrl}/v1/accounts/${mockNumber}/settings`,
           {
             method: "PUT",
             body: JSON.stringify(settings),
-          }
+          },
         );
       });
 
@@ -222,14 +224,14 @@ describe("AccountService", () => {
         });
 
         await expect(
-          service.updateAccountSettings(mockNumber, settings)
+          service.updateAccountSettings(mockNumber, settings),
         ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
         expect(global.fetch).toHaveBeenCalledWith(
           `${mockApiUrl}/v1/accounts/${mockNumber}/settings`,
           {
             method: "PUT",
             body: JSON.stringify(settings),
-          }
+          },
         );
       });
 
@@ -243,18 +245,16 @@ describe("AccountService", () => {
         });
 
         await expect(
-          service.updateAccountSettings(mockNumber, settings)
+          service.updateAccountSettings(mockNumber, settings),
         ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
         expect(global.fetch).toHaveBeenCalledWith(
           `${mockApiUrl}/v1/accounts/${mockNumber}/settings`,
           {
             method: "PUT",
             body: JSON.stringify(settings),
-          }
+          },
         );
       });
-
-
     });
 
     // --- setPin ---
@@ -267,14 +267,14 @@ describe("AccountService", () => {
         });
 
         await expect(
-          service.setPin(mockNumber, pinRequest)
+          service.setPin(mockNumber, pinRequest),
         ).resolves.toBeUndefined();
         expect(global.fetch).toHaveBeenCalledWith(
           `${mockApiUrl}/v1/accounts/${mockNumber}/pin`,
           {
             method: "POST",
             body: JSON.stringify(pinRequest),
-          }
+          },
         );
       });
 
@@ -288,14 +288,14 @@ describe("AccountService", () => {
         });
 
         await expect(service.setPin(mockNumber, pinRequest)).rejects.toThrow(
-          new ApiServiceError(errorMessage, errorStatus)
+          new ApiServiceError(errorMessage, errorStatus),
         );
         expect(global.fetch).toHaveBeenCalledWith(
           `${mockApiUrl}/v1/accounts/${mockNumber}/pin`,
           {
             method: "POST",
             body: JSON.stringify(pinRequest),
-          }
+          },
         );
       });
 
@@ -309,14 +309,14 @@ describe("AccountService", () => {
         });
 
         await expect(service.setPin(mockNumber, pinRequest)).rejects.toThrow(
-          new ApiServiceError(errorMessage, errorStatus)
+          new ApiServiceError(errorMessage, errorStatus),
         );
         expect(global.fetch).toHaveBeenCalledWith(
           `${mockApiUrl}/v1/accounts/${mockNumber}/pin`,
           {
             method: "POST",
             body: JSON.stringify(pinRequest),
-          }
+          },
         );
       });
 
@@ -325,14 +325,14 @@ describe("AccountService", () => {
         (global.fetch as jest.Mock).mockRejectedValueOnce(networkError);
 
         await expect(service.setPin(mockNumber, pinRequest)).rejects.toThrow(
-          new ApiServiceError(networkError.message, -1)
+          new ApiServiceError(networkError.message, -1),
         );
         expect(global.fetch).toHaveBeenCalledWith(
           `${mockApiUrl}/v1/accounts/${mockNumber}/pin`,
           {
             method: "POST",
             body: JSON.stringify(pinRequest),
-          }
+          },
         );
       });
     });
@@ -350,7 +350,7 @@ describe("AccountService", () => {
           `${mockApiUrl}/v1/accounts/${mockNumber}/pin`,
           {
             method: "DELETE",
-          }
+          },
         );
       });
 
@@ -364,13 +364,13 @@ describe("AccountService", () => {
         });
 
         await expect(service.removePin(mockNumber)).rejects.toThrow(
-          new ApiServiceError(errorMessage, errorStatus)
+          new ApiServiceError(errorMessage, errorStatus),
         );
         expect(global.fetch).toHaveBeenCalledWith(
           `${mockApiUrl}/v1/accounts/${mockNumber}/pin`,
           {
             method: "DELETE",
-          }
+          },
         );
       });
 
@@ -384,13 +384,13 @@ describe("AccountService", () => {
         });
 
         await expect(service.removePin(mockNumber)).rejects.toThrow(
-          new ApiServiceError(errorMessage, errorStatus)
+          new ApiServiceError(errorMessage, errorStatus),
         );
         expect(global.fetch).toHaveBeenCalledWith(
           `${mockApiUrl}/v1/accounts/${mockNumber}/pin`,
           {
             method: "DELETE",
-          }
+          },
         );
       });
 
@@ -399,13 +399,13 @@ describe("AccountService", () => {
         (global.fetch as jest.Mock).mockRejectedValueOnce(networkError);
 
         await expect(service.removePin(mockNumber)).rejects.toThrow(
-          new ApiServiceError(networkError.message, -1)
+          new ApiServiceError(networkError.message, -1),
         );
         expect(global.fetch).toHaveBeenCalledWith(
           `${mockApiUrl}/v1/accounts/${mockNumber}/pin`,
           {
             method: "DELETE",
-          }
+          },
         );
       });
     });

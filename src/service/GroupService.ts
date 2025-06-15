@@ -5,17 +5,14 @@ import {
   Group,
   UpdateGroupRequest,
 } from "../types/Group";
-import { Service } from "./Service";
+import { RestService } from "./RestService";
 import { ApiServiceError } from "../errors/ApiServiceError";
 
-class GroupService extends Service {
-  getGroup = async (
-    num: string,
-    groupId: string
-  ): Promise<Group> => {
+class GroupService extends RestService {
+  getGroup = async (num: string, groupId: string): Promise<Group> => {
     try {
       const response = await fetch(
-        this.getAPI() + "/v1/groups/" + num + "/" + groupId
+        this.getAPI() + "/v1/groups/" + num + "/" + groupId,
       );
       if (response.status === 200) {
         return (await response.json()) as Group;
@@ -44,7 +41,7 @@ class GroupService extends Service {
 
   createGroup = async (
     number: string,
-    groupDescriptor: CreateGroupRequest
+    groupDescriptor: CreateGroupRequest,
   ): Promise<CreateGroupResponse> => {
     try {
       const response = await fetch(this.getAPI() + "/v1/groups/" + number, {
@@ -62,16 +59,13 @@ class GroupService extends Service {
     }
   };
 
-  quitGroup = async (
-    number: string,
-    groupId: string
-  ): Promise<void> => {
+  quitGroup = async (number: string, groupId: string): Promise<void> => {
     try {
       const response = await fetch(
         this.getAPI() + "/v1/groups/" + number + "/" + groupId + "/quit",
         {
           method: "POST",
-        }
+        },
       );
       if (!response.ok) {
         const error = await response.text();
@@ -82,16 +76,13 @@ class GroupService extends Service {
     }
   };
 
-  deleteGroup = async (
-    number: string,
-    groupId: string
-  ): Promise<void> => {
+  deleteGroup = async (number: string, groupId: string): Promise<void> => {
     try {
       const response = await fetch(
         this.getAPI() + "/v1/groups/" + number + "/" + groupId,
         {
           method: "DELETE",
-        }
+        },
       );
       if (!response.ok) {
         const error = await response.text();
@@ -105,7 +96,7 @@ class GroupService extends Service {
   updateGroup = async (
     number: string,
     groupId: string,
-    groupUpdate: UpdateGroupRequest
+    groupUpdate: UpdateGroupRequest,
   ): Promise<void> => {
     try {
       const response = await fetch(
@@ -113,7 +104,7 @@ class GroupService extends Service {
         {
           method: "PUT",
           body: JSON.stringify(groupUpdate),
-        }
+        },
       );
       if (response.status !== 204) {
         const error = await response.text();
@@ -127,7 +118,7 @@ class GroupService extends Service {
   addAdmins = async (
     number: string,
     groupId: string,
-    admins: ChangeGroupAdminsRequest
+    admins: ChangeGroupAdminsRequest,
   ): Promise<void> => {
     try {
       const response = await fetch(
@@ -135,7 +126,7 @@ class GroupService extends Service {
         {
           method: "POST",
           body: JSON.stringify(admins),
-        }
+        },
       );
       if (response.status !== 204) {
         const error = await response.text();
@@ -149,7 +140,7 @@ class GroupService extends Service {
   deleteAdmins = async (
     number: string,
     groupId: string,
-    admins: ChangeGroupAdminsRequest
+    admins: ChangeGroupAdminsRequest,
   ): Promise<void> => {
     try {
       const response = await fetch(
@@ -157,7 +148,7 @@ class GroupService extends Service {
         {
           method: "DELETE",
           body: JSON.stringify(admins),
-        }
+        },
       );
       if (response.status !== 204) {
         const error = await response.text();

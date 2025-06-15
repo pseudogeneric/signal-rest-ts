@@ -1,10 +1,13 @@
 import { ApiServiceError } from "../errors/ApiServiceError";
+import { SignalClient } from "../SignalClient";
 
-class Service {
-  API = "";
+class RestService {
+  private API: string = "";
+  private client?: SignalClient;
 
-  constructor(api: string) {
+  constructor(api: string, client: SignalClient) {
     this.setAPI(api);
+    this.setClient(client);
   }
 
   getAPI = () => {
@@ -13,6 +16,14 @@ class Service {
 
   setAPI = (api: string): void => {
     this.API = api;
+  };
+
+  getClient = () => {
+    return this.client;
+  };
+
+  setClient = (client: SignalClient) => {
+    this.client = client;
   };
 
   unknownError = (e: any): never => {
@@ -28,6 +39,4 @@ class Service {
   };
 }
 
-
-
-export { Service };
+export { RestService };

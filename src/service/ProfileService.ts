@@ -1,11 +1,11 @@
-import { Service } from "./Service";
+import { RestService } from "./RestService";
 import { ApiServiceError } from "../errors/ApiServiceError";
 import { UpdateProfileRequest } from "../types/Profile";
 
-class ProfileService extends Service {
+class ProfileService extends RestService {
   updateProfile = async (
     number: string,
-    profileUpdate: UpdateProfileRequest
+    profileUpdate: UpdateProfileRequest,
   ): Promise<void> => {
     try {
       const response = await fetch(this.getAPI() + "/v1/profiles/" + number, {
@@ -17,7 +17,7 @@ class ProfileService extends Service {
         throw new ApiServiceError(error, response.status);
       }
     } catch (e) {
-        throw this.unknownError(e);
+      throw this.unknownError(e);
     }
   };
 }

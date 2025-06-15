@@ -1,1 +1,1 @@
-export {SignalClient} from './SignalClient';
+export { SignalClient } from "./SignalClient";

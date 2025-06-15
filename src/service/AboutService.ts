@@ -1,8 +1,8 @@
-import { Service } from "./Service";
+import { RestService } from "./RestService";
 import { AboutInfo } from "../types/About";
 import { ApiServiceError } from "../errors/ApiServiceError";
 
-class AboutService extends Service {
+class AboutService extends RestService {
   aboutServer = async (): Promise<AboutInfo> => {
     try {
       const response = await fetch(this.getAPI() + "/v1/about");

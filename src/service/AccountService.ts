@@ -1,8 +1,12 @@
 import { ApiServiceError } from "../errors/ApiServiceError";
-import { SetPinRequest, UpdateAccountSettingsRequest, UsernameInfo } from "../types/Account";
-import { Service } from "./Service";
+import {
+  SetPinRequest,
+  UpdateAccountSettingsRequest,
+  UsernameInfo,
+} from "../types/Account";
+import { RestService } from "./RestService";
 
-class AccountService extends Service {
+class AccountService extends RestService {
   getAccounts = async (): Promise<string[]> => {
     try {
       const response = await fetch(this.getAPI() + "/v1/accounts");
@@ -19,7 +23,7 @@ class AccountService extends Service {
 
   setUsername = async (
     number: string,
-    newName: string
+    newName: string,
   ): Promise<UsernameInfo> => {
     try {
       const response = await fetch(
@@ -27,7 +31,7 @@ class AccountService extends Service {
         {
           method: "POST",
           body: JSON.stringify({ username: newName }),
-        }
+        },
       );
       if (!response.ok) {
         const error = await response.text();
@@ -41,9 +45,12 @@ class AccountService extends Service {
 
   deleteUsername = async (number: string): Promise<void> => {
     try {
-      const response = await fetch(this.getAPI() + "/v1/accounts/" + number + "/username", {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        this.getAPI() + "/v1/accounts/" + number + "/username",
+        {
+          method: "DELETE",
+        },
+      );
       if (!response.ok) {
         const error = await response.text();
         throw new ApiServiceError(error, response.status);
@@ -55,7 +62,7 @@ class AccountService extends Service {
 
   updateAccountSettings = async (
     number: string,
-    updateSettings: UpdateAccountSettingsRequest
+    updateSettings: UpdateAccountSettingsRequest,
   ): Promise<void> => {
     try {
       const response = await fetch(
@@ -63,7 +70,7 @@ class AccountService extends Service {
         {
           method: "PUT",
           body: JSON.stringify(updateSettings),
-        }
+        },
       );
       if (response.status !== 204) {
         const error = await response.text();
@@ -74,17 +81,14 @@ class AccountService extends Service {
     }
   };
 
-  setPin = async (
-    number: string,
-    pin: SetPinRequest
-  ): Promise<void> => {
+  setPin = async (number: string, pin: SetPinRequest): Promise<void> => {
     try {
       const response = await fetch(
         this.getAPI() + "/v1/accounts/" + number + "/pin",
         {
           method: "POST",
           body: JSON.stringify(pin),
-        }
+        },
       );
       if (!response.ok) {
         const error = await response.text();
@@ -101,7 +105,7 @@ class AccountService extends Service {
         this.getAPI() + "/v1/accounts/" + number + "/pin",
         {
           method: "DELETE",
-        }
+        },
       );
       if (response.status !== 204) {
         const error = await response.text();
@@ -111,7 +115,6 @@ class AccountService extends Service {
       throw this.unknownError(e);
     }
   };
-
 }
 
 export { AccountService };

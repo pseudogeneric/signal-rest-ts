@@ -1,4 +1,3 @@
-import { SignalClient } from "../SignalClient";
 import { MessageContext } from "../types/Receive";
 import { RestService } from "./RestService";
 
@@ -52,24 +51,35 @@ class ReceiveService extends RestService {
       const dm = message.envelope.dataMessage;
       const patternMap: Map<RegExp, MessageHandlerRegistration[]> =
         this.handlerStore.get(message.account) || new Map();
-      patternMap.forEach((register, pattern) => {
+
+      patternMap.forEach((handlerRegistry, pattern) => {
         if (pattern instanceof RegExp && pattern.test(dm.message)) {
           Promise.all(
-            register.map((registration) => {
+            handlerRegistry.map((registration) => {
+              const createReplyHandler = (
+                account: string,
+                destination: string,
+              ): ((r: string) => Promise<void>) => {
+                return async (r: string) => {
+                  await this.getClient()
+                    ?.message()
+                    .sendMessage({
+                      number: account,
+                      message: r,
+                      recipients: [destination],
+                    });
+                };
+              };
+
               registration.handler({
                 message: dm.message,
                 account: message.account,
                 sourceUuid: message.envelope.sourceUuid,
                 rawMessage: message,
-                reply: async (r: string) => {
-                  await this.getClient()
-                    ?.message()
-                    .sendMessage({
-                      number: message.account,
-                      message: r,
-                      recipients: [message.envelope.sourceUuid],
-                    });
-                },
+                reply: createReplyHandler(
+                  message.account,
+                  message.envelope.sourceUuid,
+                ),
                 client: this.getClient(),
               });
             }),
@@ -84,14 +94,18 @@ class ReceiveService extends RestService {
   startReceiving = (account: string): void => {
     if (this.isReceiving.includes(account) || !this.handlerStore.has(account))
       return;
-    this.isReceiving.push(account);
-    const accountSocket = new WebSocket(
-      this.getAPI() + "/v1/receive/" + account,
-    );
-    accountSocket.onmessage = (event: MessageEvent) => {
-      this.processMessage(JSON.parse(event.data));
-    };
-    this.accountSockets.set(account, accountSocket);
+    try {
+      const accountSocket = new WebSocket(
+        this.getAPI() + "/v1/receive/" + account,
+      );
+      accountSocket.onmessage = (event: MessageEvent) => {
+        this.processMessage(JSON.parse(event.data));
+      };
+      this.accountSockets.set(account, accountSocket);
+      this.isReceiving.push(account);
+    } catch (e) {
+      throw e;
+    }
   };
 
   stopReceiving = (account: string): void => {

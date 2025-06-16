@@ -80,6 +80,10 @@ This will add `window.SignalClient` which exports the SignalClient class and can
 
 Note that you will have to properly configure CORS, since requests to the endpoint are almost certainly going to be cross-origin. This is left as an exercise for the user.
 
+## Notes
+
+In order to use the Receive service, **signal-cli-rest-api** should be ran in `json-rpc` mode.
+
 ## Contributions
 
 Contributions are welcome.

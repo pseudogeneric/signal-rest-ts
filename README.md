@@ -60,12 +60,37 @@ const sendMeAMessage = async () => {
 const signal = new SignalClient("http://localhost:8080");
 const accounts = await signal.account().getAccounts();
 
-signal.receive().registerHandler(accounts[0], /^ha{2,}/, async (context) => {
+signal.receive().registerHandler(accounts[0], /^(ha){2,}/, async (context) => {
   console.log(context.sourceUuid + " -> " + context.message);
   context.reply("What's so funny?");
 });
 
 signal.receive().startReceiving(accounts[0]);
+```
+
+#### Working across all accounts
+
+If your handler should run across all accounts associated to the API, you will want to set a handler for each account. You will also want to "start receiving" for each account. Each account's messages are listened to using a separate WebSocket.
+
+```typescript
+accounts.forEach((account) => {
+  signal.receive().registerHandler(account, /^\!command/, async (context) => {
+    // ...
+  });
+  signal.receive().startReceiving(account);
+}
+```
+
+#### Exiting Cleanly
+
+It may be smart to clean up open WebSockets. Or if your application keeps running it may be because they are open. You can close all sockets using `ReceiveService#stopAllReceiving()`.
+
+For example, in a Node-based application:
+
+```typescript
+process.on("SIGINT", () => {
+  signal.receive().stopAllReceiving();
+});
 ```
 
 ### DOM

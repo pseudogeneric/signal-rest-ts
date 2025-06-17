@@ -46,7 +46,7 @@ class ReceiveService extends RestService {
     this.handlerStore = new Map();
   };
 
-  processMessage = (message: any) => {
+  private processMessage = (message: any) => {
     if (message.envelope && message.envelope.dataMessage) {
       const dm = message.envelope.dataMessage;
       const patternMap: Map<RegExp, MessageHandlerRegistration[]> =
@@ -55,7 +55,7 @@ class ReceiveService extends RestService {
       patternMap.forEach((handlerRegistry, pattern) => {
         if (pattern instanceof RegExp && pattern.test(dm.message)) {
           Promise.all(
-            handlerRegistry.map((registration) => {
+            handlerRegistry.map((patternHandler) => {
               const createReplyHandler = (
                 account: string,
                 destination: string,
@@ -71,7 +71,7 @@ class ReceiveService extends RestService {
                 };
               };
 
-              registration.handler({
+              patternHandler.handler({
                 message: dm.message,
                 account: message.account,
                 sourceUuid: message.envelope.sourceUuid,

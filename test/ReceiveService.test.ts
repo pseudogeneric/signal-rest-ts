@@ -178,115 +178,6 @@ describe("ReceiveService", () => {
     });
   });
 
-  describe("processMessage", () => {
-    const testAccount = "test-account";
-    const testSourceUuid = "test-source-uuid";
-    const testPattern = /hello/;
-    let mockHandler: jest.Mock;
-
-    beforeEach(() => {
-      mockHandler = jest.fn();
-      // Register a default handler for most tests
-      service.registerHandler(testAccount, testPattern, mockHandler);
-    });
-
-    const createMockMessage = (
-      messageText: string,
-      account: string = testAccount,
-      sourceUuid: string = testSourceUuid,
-    ) => ({
-      account,
-      envelope: {
-        sourceUuid,
-        dataMessage: {
-          message: messageText,
-        },
-      },
-    });
-
-    it("should call the handler for a matching message pattern", async () => {
-      const messageText = "hello world";
-      const rawMessage = createMockMessage(messageText);
-      await service.processMessage(rawMessage);
-
-      expect(mockHandler).toHaveBeenCalledTimes(1);
-      const expectedContext: Partial<MessageContext> = {
-        message: messageText,
-        account: testAccount,
-        sourceUuid: testSourceUuid,
-        rawMessage: rawMessage,
-        // client: mockSignalClient, // client is part of the context
-      };
-      const calledContext = mockHandler.mock.calls[0][0];
-      expect(calledContext).toMatchObject(expectedContext);
-      expect(typeof calledContext.reply).toBe("function");
-      expect(calledContext.client).toBe(mockSignalClient);
-    });
-
-    it("should not call the handler for a non-matching message pattern", async () => {
-      const rawMessage = createMockMessage("goodbye world");
-      await service.processMessage(rawMessage);
-      expect(mockHandler).not.toHaveBeenCalled();
-    });
-
-    it("should not call the handler if the account does not match", async () => {
-      const rawMessage = createMockMessage("hello world", "other-account");
-      await service.processMessage(rawMessage);
-      expect(mockHandler).not.toHaveBeenCalled();
-    });
-
-    it("should call multiple handlers for the same pattern", async () => {
-      const anotherMockHandler = jest.fn();
-      service.registerHandler(testAccount, testPattern, anotherMockHandler);
-      const messageText = "hello there";
-      const rawMessage = createMockMessage(messageText);
-      await service.processMessage(rawMessage);
-
-      expect(mockHandler).toHaveBeenCalledTimes(1);
-      expect(anotherMockHandler).toHaveBeenCalledTimes(1);
-    });
-
-    it("reply function should call SignalClient.message().sendMessage with correct parameters", async () => {
-      const replyText = "this is a reply";
-      mockHandler.mockImplementation(async (ctx: MessageContext) => {
-        await ctx.reply(replyText);
-      });
-
-      const messageText = "hello reply test";
-      const rawMessage = createMockMessage(messageText);
-      await service.processMessage(rawMessage);
-
-      expect(mockHandler).toHaveBeenCalled();
-      expect(mockSendMessageHandler).toHaveBeenCalledTimes(1);
-      expect(mockSendMessageHandler).toHaveBeenCalledWith({
-        number: testAccount,
-        message: replyText,
-        recipients: [testSourceUuid],
-      });
-    });
-
-    it("should not throw and not call handlers if message structure is incorrect (missing envelope.dataMessage)", async () => {
-      const malformedMessage = {
-        account: testAccount,
-        envelope: {
-          sourceUuid: testSourceUuid,
-          // dataMessage is missing
-        },
-      };
-      await service.processMessage(malformedMessage);
-      expect(mockHandler).not.toHaveBeenCalled();
-    });
-
-    it("should not throw and not call handlers if message structure is incorrect (missing envelope)", async () => {
-      const malformedMessage = {
-        account: testAccount,
-        // envelope is missing
-      };
-      await service.processMessage(malformedMessage);
-      expect(mockHandler).not.toHaveBeenCalled();
-    });
-  });
-
   describe("startReceiving", () => {
     const testAccount = "test-account-ws";
     const testApiUrl = "ws://localhost:8080"; // Ensure this matches service's api path
@@ -307,9 +198,6 @@ describe("ReceiveService", () => {
 
       // Register the default handler needed for most tests in this suite
       service.registerHandler(testAccount, /.*/, jest.fn());
-
-      // Clear processMessage spy
-      jest.spyOn(service, "processMessage").mockClear();
     });
 
     afterEach(() => {

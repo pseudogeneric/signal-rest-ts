@@ -56,7 +56,7 @@ const sendMeAMessage = async () => {
 const signal = new SignalClient("http://localhost:8080");
 const accounts = await signal.account().getAccounts();
 
-signal.receive().registerHandler(accounts[0], /^haha/, async (context) => {
+signal.receive().registerHandler(accounts[0], /^ha{2,}/, async (context) => {
   console.log(context.sourceUuid + " -> " + context.message);
   context.reply("What's so funny?");
 });

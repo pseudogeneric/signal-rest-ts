@@ -12,6 +12,10 @@ npm install signal-rest-ts
 
 ## Usage
 
+### Notes
+
+In order to use the Receive service, **signal-cli-rest-api** should be ran in `json-rpc` mode.
+
 ### As a module
 
 #### Get all group metadata, for all accounts
@@ -79,10 +83,6 @@ This will add `window.SignalClient` which exports the SignalClient class and can
 #### CORS
 
 Note that you will have to properly configure CORS, since requests to the endpoint are almost certainly going to be cross-origin. This is left as an exercise for the user.
-
-## Notes
-
-In order to use the Receive service, **signal-cli-rest-api** should be ran in `json-rpc` mode.
 
 ## Contributions
 

@@ -9,131 +9,138 @@ import { RestService } from "./RestService";
 import { ApiServiceError } from "../errors/ApiServiceError";
 
 class GroupService extends RestService {
-  getGroup = async (num: string, groupId: string): Promise<Group> => {
+  getGroup = async (account: string, groupId: string): Promise<Group> => {
+    let response;
     try {
-      const response = await fetch(
-        this.getAPI() + "/v1/groups/" + num + "/" + groupId,
+      response = await fetch(
+        this.getAPI() + "/v1/groups/" + account + "/" + groupId,
       );
-      if (response.status === 200) {
-        return (await response.json()) as Group;
-      } else {
-        const error = await response.text();
-        throw new ApiServiceError(error, response.status);
-      }
     } catch (e) {
       throw this.unknownError(e);
     }
+    if (response.ok) {
+      return (await response.json()) as Group;
+    } else {
+      const error = await response.text();
+      throw new ApiServiceError(error, response.status);
+    }
   };
 
-  getGroups = async (num: string): Promise<Group[]> => {
+  getGroups = async (account: string): Promise<Group[]> => {
+    let response;
     try {
-      const response = await fetch(this.getAPI() + "/v1/groups/" + num);
-      if (response.status === 200) {
-        return (await response.json()) as Group[];
-      } else {
-        const error = await response.text();
-        throw new ApiServiceError(error, response.status);
-      }
+      response = await fetch(this.getAPI() + "/v1/groups/" + account);
     } catch (e) {
       throw this.unknownError(e);
+    }
+    if (response.ok) {
+      return (await response.json()) as Group[];
+    } else {
+      const error = await response.text();
+      throw new ApiServiceError(error, response.status);
     }
   };
 
   createGroup = async (
-    number: string,
+    account: string,
     groupDescriptor: CreateGroupRequest,
   ): Promise<CreateGroupResponse> => {
+    let response;
     try {
-      const response = await fetch(this.getAPI() + "/v1/groups/" + number, {
+      response = await fetch(this.getAPI() + "/v1/groups/" + account, {
         method: "POST",
         body: JSON.stringify(groupDescriptor),
       });
-      if (response.status === 201) {
-        return (await response.json()) as CreateGroupResponse;
-      } else {
-        const error = await response.text();
-        throw new ApiServiceError(error, response.status);
-      }
     } catch (e) {
       throw this.unknownError(e);
     }
+    if (response.status === 201) {
+      return (await response.json()) as CreateGroupResponse;
+    } else {
+      const error = await response.text();
+      throw new ApiServiceError(error, response.status);
+    }
   };
 
-  quitGroup = async (number: string, groupId: string): Promise<void> => {
+  quitGroup = async (account: string, groupId: string): Promise<void> => {
+    let response;
     try {
-      const response = await fetch(
-        this.getAPI() + "/v1/groups/" + number + "/" + groupId + "/quit",
+      response = await fetch(
+        this.getAPI() + "/v1/groups/" + account + "/" + groupId + "/quit",
         {
           method: "POST",
         },
       );
-      if (!response.ok) {
-        const error = await response.text();
-        throw new ApiServiceError(error, response.status);
-      }
     } catch (e) {
       throw this.unknownError(e);
     }
+    if (!response.ok) {
+      const error = await response.text();
+      throw new ApiServiceError(error, response.status);
+    }
   };
 
-  deleteGroup = async (number: string, groupId: string): Promise<void> => {
+  deleteGroup = async (account: string, groupId: string): Promise<void> => {
+    let response;
     try {
-      const response = await fetch(
-        this.getAPI() + "/v1/groups/" + number + "/" + groupId,
+      response = await fetch(
+        this.getAPI() + "/v1/groups/" + account + "/" + groupId,
         {
           method: "DELETE",
         },
       );
-      if (!response.ok) {
-        const error = await response.text();
-        throw new ApiServiceError(error, response.status);
-      }
     } catch (e) {
       throw this.unknownError(e);
+    }
+    if (!response.ok) {
+      const error = await response.text();
+      throw new ApiServiceError(error, response.status);
     }
   };
 
   updateGroup = async (
-    number: string,
+    account: string,
     groupId: string,
     groupUpdate: UpdateGroupRequest,
   ): Promise<void> => {
+    let response;
     try {
-      const response = await fetch(
-        this.getAPI() + "/v1/groups/" + number + "/" + groupId,
+      response = await fetch(
+        this.getAPI() + "/v1/groups/" + account + "/" + groupId,
         {
           method: "PUT",
           body: JSON.stringify(groupUpdate),
         },
       );
-      if (response.status !== 204) {
-        const error = await response.text();
-        throw new ApiServiceError(error, response.status);
-      }
     } catch (e) {
       throw this.unknownError(e);
+    }
+    if (!response.ok) {
+      const error = await response.text();
+      throw new ApiServiceError(error, response.status);
     }
   };
 
   addAdmins = async (
-    number: string,
+    account: string,
     groupId: string,
     admins: ChangeGroupAdminsRequest,
   ): Promise<void> => {
+    let response;
     try {
-      const response = await fetch(
-        this.getAPI() + "/v1/groups/" + number + "/" + groupId + "/admins",
+      response = await fetch(
+        this.getAPI() + "/v1/groups/" + account + "/" + groupId + "/admins",
         {
           method: "POST",
           body: JSON.stringify(admins),
         },
       );
-      if (response.status !== 204) {
-        const error = await response.text();
-        throw new ApiServiceError(error, response.status);
-      }
     } catch (e) {
       throw this.unknownError(e);
+    }
+    if (response.status !== 204) {
+      const error = await response.text();
+      throw new ApiServiceError(error, response.status);
     }
   };
 
@@ -142,21 +149,42 @@ class GroupService extends RestService {
     groupId: string,
     admins: ChangeGroupAdminsRequest,
   ): Promise<void> => {
+    let response;
     try {
-      const response = await fetch(
+      response = await fetch(
         this.getAPI() + "/v1/groups/" + number + "/" + groupId + "/admins",
         {
           method: "DELETE",
           body: JSON.stringify(admins),
         },
       );
-      if (response.status !== 204) {
-        const error = await response.text();
-        throw new ApiServiceError(error, response.status);
-      }
     } catch (e) {
       throw this.unknownError(e);
     }
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new ApiServiceError(error, response.status);
+    }
+  };
+
+  getGroupAvatar = async (
+    account: string,
+    groupId: string,
+  ): Promise<string> => {
+    let response;
+    try {
+      response = await fetch(
+        this.getAPI() + "/v1/groups/" + account + "/" + groupId + "/avatar",
+      );
+    } catch (e) {
+      throw this.unknownError(e);
+    }
+    if (!response.ok) {
+      const error = await response.text();
+      throw new ApiServiceError(error, response.status);
+    }
+    return (await response.text()) as string;
   };
 }
 

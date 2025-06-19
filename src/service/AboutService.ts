@@ -4,17 +4,19 @@ import { ApiServiceError } from "../errors/ApiServiceError";
 
 class AboutService extends RestService {
   aboutServer = async (): Promise<AboutInfo> => {
+    let response;
     try {
-      const response = await fetch(this.getAPI() + "/v1/about");
-      if (!response.ok) {
-        const errorText = await response.text();
-
-        throw new ApiServiceError(errorText, response.status);
-      }
-      return response.json() as AboutInfo;
+      response = await fetch(this.getAPI() + "/v1/about");
     } catch (e) {
       throw this.unknownError(e);
     }
+
+    if (!response.ok) {
+      const errorText = await response.text();
+
+      throw new ApiServiceError(errorText, response.status);
+    }
+    return response.json() as AboutInfo;
   };
 }
 

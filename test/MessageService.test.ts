@@ -76,4 +76,132 @@ describe("MessageService", () => {
       });
     });
   });
+
+  describe("showTypingIndicator", () => {
+    const account = "+444444";
+    const recipient = "+12345";
+
+    it("should return showTypingIndicatorResponse on successful PUT (201)", async () => {
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        status: 204,
+      });
+
+      const result = service.showTypingIndicator(account, recipient);
+      expect(result).resolves.toBeUndefined();
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${mockApiUrl}/v1/typing-indicator/${account}`,
+        {
+          method: "PUT",
+          body: JSON.stringify({ recipient: recipient }),
+        },
+      );
+    });
+
+    it("should throw ApiServiceError if status is not 201 (e.g. 400)", async () => {
+      const errorMessage = "Bad Request";
+      const errorStatus = 400;
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: errorStatus,
+        text: async () => errorMessage, // Or .json() if the error response is JSON
+      });
+
+      await expect(
+        service.showTypingIndicator(account, recipient),
+      ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${mockApiUrl}/v1/typing-indicator/${account}`,
+        {
+          method: "PUT",
+          body: JSON.stringify({ recipient: recipient }),
+        },
+      );
+    });
+
+    it("should throw ApiServiceError on other API error (e.g. 500)", async () => {
+      const errorMessage = "Internal Server Error";
+      const errorStatus = 500;
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: errorStatus,
+        text: async () => errorMessage,
+      });
+
+      await expect(
+        service.showTypingIndicator(account, recipient),
+      ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${mockApiUrl}/v1/typing-indicator/${account}`,
+        {
+          method: "PUT",
+          body: JSON.stringify({ recipient: recipient }),
+        },
+      );
+    });
+  });
+
+  describe("hideTypingIndicator", () => {
+    const account = "+444444";
+    const recipient = "+12345";
+
+    it("should return hideTypingIndicatorResponse on successful DELETE (201)", async () => {
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        status: 204,
+      });
+
+      const result = service.hideTypingIndicator(account, recipient);
+      expect(result).resolves.toBeUndefined();
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${mockApiUrl}/v1/typing-indicator/${account}`,
+        {
+          method: "DELETE",
+          body: JSON.stringify({ recipient: recipient }),
+        },
+      );
+    });
+
+    it("should throw ApiServiceError if status is not 201 (e.g. 400)", async () => {
+      const errorMessage = "Bad Request";
+      const errorStatus = 400;
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: errorStatus,
+        text: async () => errorMessage, // Or .json() if the error response is JSON
+      });
+
+      await expect(
+        service.hideTypingIndicator(account, recipient),
+      ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${mockApiUrl}/v1/typing-indicator/${account}`,
+        {
+          method: "DELETE",
+          body: JSON.stringify({ recipient: recipient }),
+        },
+      );
+    });
+
+    it("should throw ApiServiceError on other API error (e.g. 500)", async () => {
+      const errorMessage = "Internal Server Error";
+      const errorStatus = 500;
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: errorStatus,
+        text: async () => errorMessage,
+      });
+
+      await expect(
+        service.hideTypingIndicator(account, recipient),
+      ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${mockApiUrl}/v1/typing-indicator/${account}`,
+        {
+          method: "DELETE",
+          body: JSON.stringify({ recipient: recipient }),
+        },
+      );
+    });
+  });
 });

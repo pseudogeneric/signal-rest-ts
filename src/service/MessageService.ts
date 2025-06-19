@@ -22,6 +22,50 @@ class MessageService extends RestService {
     }
     return (await response.json()) as SendMessageResponse;
   };
+
+  showTypingIndicator = async (
+    account: string,
+    recipient: string,
+  ): Promise<void> => {
+    let response;
+    try {
+      response = await fetch(
+        this.getAPI() + "/v1/typing-indicator/" + account,
+        {
+          method: "PUT",
+          body: JSON.stringify({ recipient: recipient }),
+        },
+      );
+    } catch (e) {
+      throw this.unknownError(e);
+    }
+    if (!response.ok) {
+      const error = await response.text();
+      throw new ApiServiceError(error, response.status);
+    }
+  };
+
+  hideTypingIndicator = async (
+    account: string,
+    recipient: string,
+  ): Promise<void> => {
+    let response;
+    try {
+      response = await fetch(
+        this.getAPI() + "/v1/typing-indicator/" + account,
+        {
+          method: "DELETE",
+          body: JSON.stringify({ recipient: recipient }),
+        },
+      );
+    } catch (e) {
+      throw this.unknownError(e);
+    }
+    if (!response.ok) {
+      const error = await response.text();
+      throw new ApiServiceError(error, response.status);
+    }
+  };
 }
 
 export { MessageService };

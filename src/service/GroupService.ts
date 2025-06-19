@@ -98,6 +98,25 @@ class GroupService extends RestService {
     }
   };
 
+  blockGroup = async (account: string, groupId: string): Promise<void> => {
+    let response;
+    try {
+      response = await fetch(
+        this.getAPI() + "/v1/groups/" + account + "/" + groupId + "/block",
+        {
+          method: "POST",
+        },
+      );
+    } catch (e) {
+      throw this.unknownError(e);
+    }
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new ApiServiceError(error, response.status);
+    }
+  };
+
   updateGroup = async (
     account: string,
     groupId: string,

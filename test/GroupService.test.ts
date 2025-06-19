@@ -602,4 +602,109 @@ describe("GroupService", () => {
       );
     });
   });
+
+  describe("blockGroup", () => {
+    it("should resolve on successful POST (204)", async () => {
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        status: 204,
+      });
+
+      await expect(
+        service.blockGroup(mockNumber, mockGroupId),
+      ).resolves.toBeUndefined();
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/block`,
+        {
+          method: "POST",
+        },
+      );
+    });
+
+    it("should throw ApiServiceError on network error", async () => {
+      const networkError = new Error(
+        "Server connection lost while blocking group",
+      );
+      (global.fetch as jest.Mock).mockRejectedValueOnce(networkError);
+
+      await expect(service.blockGroup(mockNumber, mockGroupId)).rejects.toThrow(
+        new ApiServiceError(networkError.message, -1),
+      );
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/block`,
+        {
+          method: "POST",
+        },
+      );
+    });
+
+    it("should throw ApiServiceError on API error (e.g. 404 admin not found)", async () => {
+      const errorMessage = "Group to block not found";
+      const errorStatus = 404;
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: errorStatus,
+        text: async () => errorMessage,
+      });
+
+      await expect(service.blockGroup(mockNumber, mockGroupId)).rejects.toThrow(
+        new ApiServiceError(errorMessage, errorStatus),
+      );
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/block`,
+        {
+          method: "POST",
+        },
+      );
+    });
+  });
+
+  describe("getGroupAvatar", () => {
+    it("should resolve and return avatar string on successful GET (200)", async () => {
+      const groupAvatar = "aVaTaRbasE64=";
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        text: async () => groupAvatar,
+      });
+
+      await expect(
+        service.getGroupAvatar(mockNumber, mockGroupId),
+      ).resolves.toBe(groupAvatar);
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/avatar`,
+      );
+    });
+
+    it("should throw ApiServiceError on network error", async () => {
+      const networkError = new Error(
+        "Server connection lost while blocking group",
+      );
+      (global.fetch as jest.Mock).mockRejectedValueOnce(networkError);
+
+      await expect(
+        service.getGroupAvatar(mockNumber, mockGroupId),
+      ).rejects.toThrow(new ApiServiceError(networkError.message, -1));
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/avatar`,
+      );
+    });
+
+    it("should throw ApiServiceError on API error (e.g. 404 admin not found)", async () => {
+      const errorMessage = "Group to block not found";
+      const errorStatus = 404;
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: errorStatus,
+        text: async () => errorMessage,
+      });
+
+      await expect(
+        service.getGroupAvatar(mockNumber, mockGroupId),
+      ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/avatar`,
+      );
+    });
+  });
 });

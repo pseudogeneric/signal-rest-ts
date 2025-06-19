@@ -2,7 +2,7 @@
 
 ## About
 
-**signal-rest-ts** is a typescript wrapper around [signal-cli-rest-api](https://github.com/bbernhard/signal-cli-rest-api). It can be used in TypeScript or JavaScript based projects, both as a module and in a browser.
+**signal-rest-ts** is a TypeScript wrapper around [signal-cli-rest-api](https://github.com/bbernhard/signal-cli-rest-api). It can be used in TypeScript or JavaScript based projects, both as a module and in a browser.
 
 ## Installation
 
@@ -83,7 +83,7 @@ accounts.forEach((account) => {
 
 #### Exiting Cleanly
 
-It may be smart to clean up open WebSockets. Or if your application keeps running it may be because they are open. You can close all sockets using `ReceiveService#stopAllReceiving()`.
+It may be smart to clean up open [WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API). Or if your application keeps running it may be because they are open. You can close all sockets using `ReceiveService#stopAllReceiving()`.
 
 For example, in a Node-based application:
 
@@ -107,7 +107,19 @@ This will add `window.SignalClient` which exports the SignalClient class and can
 
 #### CORS
 
-Note that you will have to properly configure CORS, since requests to the endpoint are almost certainly going to be cross-origin. This is left as an exercise for the user.
+Note that you will have to properly configure [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS), since requests to the endpoint are almost certainly going to be cross-origin.
+
+For example, [nginx](https://nginx.org) can be configured to serve permissive CORS headers. Note this example is **not secure**. Hardening is left as an exercise for the user.
+
+```nginx
+location ~/signal-api/(.*)$ {
+  proxy_pass http://10.0.0.1:8080/$1$is_args$args;
+  add_header 'Access-Control-Allow-Origin' '*';
+  add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE';
+  add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization';
+  add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
+}
+```
 
 ## Contributions
 

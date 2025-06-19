@@ -531,7 +531,7 @@ describe("GroupService", () => {
       });
 
       await expect(
-        service.deleteAdmins(mockNumber, mockGroupId, adminRequest),
+        service.removeAdmins(mockNumber, mockGroupId, adminRequest),
       ).resolves.toBeUndefined();
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/admins`,
@@ -552,7 +552,7 @@ describe("GroupService", () => {
       });
 
       await expect(
-        service.deleteAdmins(mockNumber, mockGroupId, adminRequest),
+        service.removeAdmins(mockNumber, mockGroupId, adminRequest),
       ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/admins`,
@@ -573,7 +573,7 @@ describe("GroupService", () => {
       });
 
       await expect(
-        service.deleteAdmins(mockNumber, mockGroupId, adminRequest),
+        service.removeAdmins(mockNumber, mockGroupId, adminRequest),
       ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/admins`,
@@ -591,7 +591,7 @@ describe("GroupService", () => {
       (global.fetch as jest.Mock).mockRejectedValueOnce(networkError);
 
       await expect(
-        service.deleteAdmins(mockNumber, mockGroupId, adminRequest),
+        service.removeAdmins(mockNumber, mockGroupId, adminRequest),
       ).rejects.toThrow(new ApiServiceError(networkError.message, -1));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/admins`,
@@ -704,6 +704,128 @@ describe("GroupService", () => {
       ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/avatar`,
+      );
+    });
+  });
+
+  describe("addMembers", () => {
+    const members = ["+12345", "userId=="];
+
+    it("should resolve on successful POST (204)", async () => {
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        status: 204,
+      });
+
+      await expect(
+        service.addMembers(mockNumber, mockGroupId, members),
+      ).resolves.toBeUndefined();
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/members`,
+        {
+          method: "POST",
+          body: JSON.stringify({ members: members }),
+        },
+      );
+    });
+
+    it("should throw ApiServiceError on network error", async () => {
+      const networkError = new Error(
+        "Server connection lost while blocking group",
+      );
+      (global.fetch as jest.Mock).mockRejectedValueOnce(networkError);
+
+      await expect(
+        service.addMembers(mockNumber, mockGroupId, members),
+      ).rejects.toThrow(new ApiServiceError(networkError.message, -1));
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/members`,
+        {
+          method: "POST",
+          body: JSON.stringify({ members: members }),
+        },
+      );
+    });
+
+    it("should throw ApiServiceError on API error (e.g. 404 admin not found)", async () => {
+      const errorMessage = "Group to block not found";
+      const errorStatus = 404;
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: errorStatus,
+        text: async () => errorMessage,
+      });
+
+      await expect(
+        service.addMembers(mockNumber, mockGroupId, members),
+      ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/members`,
+        {
+          method: "POST",
+          body: JSON.stringify({ members: members }),
+        },
+      );
+    });
+  });
+
+  describe("removeMembers", () => {
+    const members = ["+12345", "userId=="];
+
+    it("should resolve on successful DELETE (204)", async () => {
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        status: 204,
+      });
+
+      await expect(
+        service.removeMembers(mockNumber, mockGroupId, members),
+      ).resolves.toBeUndefined();
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/members`,
+        {
+          method: "DELETE",
+          body: JSON.stringify({ members: members }),
+        },
+      );
+    });
+
+    it("should throw ApiServiceError on network error", async () => {
+      const networkError = new Error(
+        "Server connection lost while blocking group",
+      );
+      (global.fetch as jest.Mock).mockRejectedValueOnce(networkError);
+
+      await expect(
+        service.removeMembers(mockNumber, mockGroupId, members),
+      ).rejects.toThrow(new ApiServiceError(networkError.message, -1));
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/members`,
+        {
+          method: "DELETE",
+          body: JSON.stringify({ members: members }),
+        },
+      );
+    });
+
+    it("should throw ApiServiceError on API error (e.g. 404 admin not found)", async () => {
+      const errorMessage = "Group to block not found";
+      const errorStatus = 404;
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: errorStatus,
+        text: async () => errorMessage,
+      });
+
+      await expect(
+        service.removeMembers(mockNumber, mockGroupId, members),
+      ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/members`,
+        {
+          method: "DELETE",
+          body: JSON.stringify({ members: members }),
+        },
       );
     });
   });

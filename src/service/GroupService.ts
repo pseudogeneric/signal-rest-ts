@@ -163,7 +163,7 @@ class GroupService extends RestService {
     }
   };
 
-  deleteAdmins = async (
+  removeAdmins = async (
     number: string,
     groupId: string,
     admins: ChangeGroupAdminsRequest,
@@ -175,6 +175,54 @@ class GroupService extends RestService {
         {
           method: "DELETE",
           body: JSON.stringify(admins),
+        },
+      );
+    } catch (e) {
+      throw this.unknownError(e);
+    }
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new ApiServiceError(error, response.status);
+    }
+  };
+
+  addMembers = async (
+    account: string,
+    groupId: string,
+    members: string[],
+  ): Promise<void> => {
+    let response;
+    try {
+      response = await fetch(
+        this.getAPI() + "/v1/groups/" + account + "/" + groupId + "/members",
+        {
+          method: "POST",
+          body: JSON.stringify({ members: members }),
+        },
+      );
+    } catch (e) {
+      throw this.unknownError(e);
+    }
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new ApiServiceError(error, response.status);
+    }
+  };
+
+  removeMembers = async (
+    account: string,
+    groupId: string,
+    members: string[],
+  ): Promise<void> => {
+    let response;
+    try {
+      response = await fetch(
+        this.getAPI() + "/v1/groups/" + account + "/" + groupId + "/members",
+        {
+          method: "DELETE",
+          body: JSON.stringify({ members: members }),
         },
       );
     } catch (e) {

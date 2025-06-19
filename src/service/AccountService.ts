@@ -8,111 +8,122 @@ import { RestService } from "./RestService";
 
 class AccountService extends RestService {
   getAccounts = async (): Promise<string[]> => {
+    let response;
     try {
-      const response = await fetch(this.getAPI() + "/v1/accounts");
-      if (response.status === 200) {
-        return (await response.json()) as string[];
-      } else {
-        const errorMessage = await response.text();
-        throw new ApiServiceError(errorMessage, response.status);
-      }
+      response = await fetch(this.getAPI() + "/v1/accounts");
     } catch (e) {
       throw this.unknownError(e);
+    }
+    if (response.status === 200) {
+      return (await response.json()) as string[];
+    } else {
+      const errorMessage = await response.text();
+      throw new ApiServiceError(errorMessage, response.status);
     }
   };
 
   setUsername = async (
-    number: string,
+    account: string,
     newName: string,
   ): Promise<UsernameInfo> => {
+    let response;
     try {
-      const response = await fetch(
-        this.getAPI() + "/v1/accounts/" + number + "/username",
+      response = await fetch(
+        this.getAPI() + "/v1/accounts/" + account + "/username",
         {
           method: "POST",
           body: JSON.stringify({ username: newName }),
         },
       );
-      if (!response.ok) {
-        const error = await response.text();
-        throw new ApiServiceError(error, response.status);
-      }
-      return (await response.json()) as UsernameInfo;
     } catch (e) {
       throw this.unknownError(e);
     }
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new ApiServiceError(error, response.status);
+    }
+    return (await response.json()) as UsernameInfo;
   };
 
-  deleteUsername = async (number: string): Promise<void> => {
+  deleteUsername = async (account: string): Promise<void> => {
+    let response;
     try {
-      const response = await fetch(
-        this.getAPI() + "/v1/accounts/" + number + "/username",
+      response = await fetch(
+        this.getAPI() + "/v1/accounts/" + account + "/username",
         {
           method: "DELETE",
         },
       );
-      if (!response.ok) {
-        const error = await response.text();
-        throw new ApiServiceError(error, response.status);
-      }
     } catch (e) {
       throw this.unknownError(e);
+    }
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new ApiServiceError(error, response.status);
     }
   };
 
   updateAccountSettings = async (
-    number: string,
+    account: string,
     updateSettings: UpdateAccountSettingsRequest,
   ): Promise<void> => {
+    let response;
     try {
-      const response = await fetch(
-        this.getAPI() + "/v1/accounts/" + number + "/settings",
+      response = await fetch(
+        this.getAPI() + "/v1/accounts/" + account + "/settings",
         {
           method: "PUT",
           body: JSON.stringify(updateSettings),
         },
       );
-      if (response.status !== 204) {
-        const error = await response.text();
-        throw new ApiServiceError(error, response.status);
-      }
     } catch (e) {
       throw this.unknownError(e);
     }
+
+    if (response.status !== 204) {
+      const error = await response.text();
+      throw new ApiServiceError(error, response.status);
+    }
   };
 
-  setPin = async (number: string, pin: SetPinRequest): Promise<void> => {
+  setPin = async (account: string, pin: SetPinRequest): Promise<void> => {
+    let response;
     try {
-      const response = await fetch(
-        this.getAPI() + "/v1/accounts/" + number + "/pin",
+      response = await fetch(
+        this.getAPI() + "/v1/accounts/" + account + "/pin",
         {
           method: "POST",
           body: JSON.stringify(pin),
         },
       );
-      if (!response.ok) {
-        const error = await response.text();
-        throw new ApiServiceError(error, response.status);
-      }
     } catch (e) {
       throw this.unknownError(e);
     }
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new ApiServiceError(error, response.status);
+    }
   };
 
-  removePin = async (number: string): Promise<void> => {
+  removePin = async (account: string): Promise<void> => {
+    let response;
     try {
-      const response = await fetch(
-        this.getAPI() + "/v1/accounts/" + number + "/pin",
+      response = await fetch(
+        this.getAPI() + "/v1/accounts/" + account + "/pin",
         {
           method: "DELETE",
         },
       );
-      if (response.status !== 204) {
-        const error = await response.text();
-        throw new ApiServiceError(error, response.status);
-      }
     } catch (e) {
       throw this.unknownError(e);
+    }
+
+    if (response.status !== 204) {
+      const error = await response.text();
+      throw new ApiServiceError(error, response.status);
     }
   };
 }

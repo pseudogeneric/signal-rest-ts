@@ -5,6 +5,7 @@ import {
   SendMessageV2,
   SendMessageResponse,
   Reaction,
+  Receipt,
 } from "../src/types/Message";
 import { SignalClient } from "../src/SignalClient";
 
@@ -344,6 +345,75 @@ describe("MessageService", () => {
         {
           method: "DELETE",
           body: JSON.stringify(react),
+        },
+      );
+    });
+  });
+
+  describe("sendReadReceipt", () => {
+    const account = "+22222";
+
+    const receipt: Receipt = {
+      receipt_type: "read",
+      recipient: "+11111",
+      timestamp: 12345,
+    };
+
+    it("should return sendReadReceiptResponse on successful DELETE (201)", async () => {
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        status: 204,
+      });
+
+      const result = service.sendReadReceipt(account, receipt);
+      expect(result).resolves.toBeUndefined();
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${mockApiUrl}/v1/receipts/${account}`,
+        {
+          method: "POST",
+          body: JSON.stringify(receipt),
+        },
+      );
+    });
+
+    it("should throw ApiServiceError if status is not 201 (e.g. 400)", async () => {
+      const errorMessage = "Bad Request";
+      const errorStatus = 400;
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: errorStatus,
+        text: async () => errorMessage, // Or .json() if the error response is JSON
+      });
+
+      await expect(service.sendReadReceipt(account, receipt)).rejects.toThrow(
+        new ApiServiceError(errorMessage, errorStatus),
+      );
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${mockApiUrl}/v1/receipts/${account}`,
+        {
+          method: "POST",
+          body: JSON.stringify(receipt),
+        },
+      );
+    });
+
+    it("should throw ApiServiceError on other API error (e.g. 500)", async () => {
+      const errorMessage = "Internal Server Error";
+      const errorStatus = 500;
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: errorStatus,
+        text: async () => errorMessage,
+      });
+
+      await expect(service.sendReadReceipt(account, receipt)).rejects.toThrow(
+        new ApiServiceError(errorMessage, errorStatus),
+      );
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${mockApiUrl}/v1/receipts/${account}`,
+        {
+          method: "POST",
+          body: JSON.stringify(receipt),
         },
       );
     });

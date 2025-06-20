@@ -1,4 +1,9 @@
-import { Reaction, SendMessageResponse, SendMessageV2 } from "../types/Message";
+import {
+  Reaction,
+  Receipt,
+  SendMessageResponse,
+  SendMessageV2,
+} from "../types/Message";
 import { RestService } from "./RestService";
 import { ApiServiceError } from "../errors/ApiServiceError";
 
@@ -93,6 +98,26 @@ class MessageService extends RestService {
       response = await fetch(this.getAPI() + "/v1/reactions/" + account, {
         method: "DELETE",
         body: JSON.stringify(reaction),
+      });
+    } catch (e) {
+      throw this.unknownError(e);
+    }
+
+    if (!response.ok) {
+      const error = await response?.text();
+      throw new ApiServiceError(error, response?.status);
+    }
+  };
+
+  sendReadReceipt = async (
+    account: string,
+    receipt: Receipt,
+  ): Promise<void> => {
+    let response;
+    try {
+      response = await fetch(this.getAPI() + "/v1/receipts/" + account, {
+        method: "POST",
+        body: JSON.stringify(receipt),
       });
     } catch (e) {
       throw this.unknownError(e);

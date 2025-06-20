@@ -37,3 +37,9 @@ export interface Reaction {
   target_author: string;
   timestamp: number;
 }
+
+export interface Receipt {
+  receipt_type: "read" | "viewed";
+  recipient: string;
+  timestamp: number;
+}

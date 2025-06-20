@@ -1,7 +1,11 @@
 // src/service/tests/MessageService.test.ts
 import { MessageService } from "../src/service/MessageService";
 import { ApiServiceError } from "../src/errors/ApiServiceError";
-import { SendMessageV2, SendMessageResponse } from "../src/types/Message";
+import {
+  SendMessageV2,
+  SendMessageResponse,
+  Reaction,
+} from "../src/types/Message";
 import { SignalClient } from "../src/SignalClient";
 
 describe("MessageService", () => {
@@ -200,6 +204,146 @@ describe("MessageService", () => {
         {
           method: "DELETE",
           body: JSON.stringify({ recipient: recipient }),
+        },
+      );
+    });
+  });
+
+  describe("addReaction", () => {
+    const account = "+22222";
+
+    const react: Reaction = {
+      reaction: ":laughing_while_crying_emoji:",
+      recipient: "+11111",
+      target_author: "author",
+      timestamp: 42,
+    };
+
+    it("should return addReactionResponse on successful DELETE (201)", async () => {
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        status: 204,
+      });
+
+      const result = service.addReaction(account, react);
+      expect(result).resolves.toBeUndefined();
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${mockApiUrl}/v1/reactions/${account}`,
+        {
+          method: "POST",
+          body: JSON.stringify(react),
+        },
+      );
+    });
+
+    it("should throw ApiServiceError if status is not 201 (e.g. 400)", async () => {
+      const errorMessage = "Bad Request";
+      const errorStatus = 400;
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: errorStatus,
+        text: async () => errorMessage, // Or .json() if the error response is JSON
+      });
+
+      await expect(service.addReaction(account, react)).rejects.toThrow(
+        new ApiServiceError(errorMessage, errorStatus),
+      );
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${mockApiUrl}/v1/reactions/${account}`,
+        {
+          method: "POST",
+          body: JSON.stringify(react),
+        },
+      );
+    });
+
+    it("should throw ApiServiceError on other API error (e.g. 500)", async () => {
+      const errorMessage = "Internal Server Error";
+      const errorStatus = 500;
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: errorStatus,
+        text: async () => errorMessage,
+      });
+
+      await expect(service.addReaction(account, react)).rejects.toThrow(
+        new ApiServiceError(errorMessage, errorStatus),
+      );
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${mockApiUrl}/v1/reactions/${account}`,
+        {
+          method: "POST",
+          body: JSON.stringify(react),
+        },
+      );
+    });
+  });
+
+  describe("removeReaction", () => {
+    const account = "+22222";
+
+    const react: Reaction = {
+      reaction: ":laughing_while_crying_emoji:",
+      recipient: "+11111",
+      target_author: "author",
+      timestamp: 42,
+    };
+
+    it("should return removeReactionResponse on successful DELETE (201)", async () => {
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        status: 204,
+      });
+
+      const result = service.removeReaction(account, react);
+      expect(result).resolves.toBeUndefined();
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${mockApiUrl}/v1/reactions/${account}`,
+        {
+          method: "DELETE",
+          body: JSON.stringify(react),
+        },
+      );
+    });
+
+    it("should throw ApiServiceError if status is not 201 (e.g. 400)", async () => {
+      const errorMessage = "Bad Request";
+      const errorStatus = 400;
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: errorStatus,
+        text: async () => errorMessage, // Or .json() if the error response is JSON
+      });
+
+      await expect(service.removeReaction(account, react)).rejects.toThrow(
+        new ApiServiceError(errorMessage, errorStatus),
+      );
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${mockApiUrl}/v1/reactions/${account}`,
+        {
+          method: "DELETE",
+          body: JSON.stringify(react),
+        },
+      );
+    });
+
+    it("should throw ApiServiceError on other API error (e.g. 500)", async () => {
+      const errorMessage = "Internal Server Error";
+      const errorStatus = 500;
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: errorStatus,
+        text: async () => errorMessage,
+      });
+
+      await expect(service.removeReaction(account, react)).rejects.toThrow(
+        new ApiServiceError(errorMessage, errorStatus),
+      );
+      expect(global.fetch).toHaveBeenCalledWith(
+        `${mockApiUrl}/v1/reactions/${account}`,
+        {
+          method: "DELETE",
+          body: JSON.stringify(react),
         },
       );
     });

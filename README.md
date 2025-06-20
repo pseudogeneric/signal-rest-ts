@@ -2,7 +2,7 @@
 
 ## About
 
-**signal-rest-ts** is a TypeScript wrapper around [signal-cli-rest-api](https://github.com/bbernhard/signal-cli-rest-api). It can be used in TypeScript or JavaScript based projects, both as a module and in a browser.
+[**signal-rest-ts**](https://npmjs.com/package/signal-rest-ts) is a TypeScript wrapper around [signal-cli-rest-api](https://github.com/bbernhard/signal-cli-rest-api). It can be used in TypeScript or JavaScript based projects, both as a module and in a browser.
 
 ## Installation
 

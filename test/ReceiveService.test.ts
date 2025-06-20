@@ -98,11 +98,11 @@ describe("ReceiveService", () => {
     it("should correctly store handlers for different accounts and patterns", () => {
       const account1 = "account1";
       const pattern1 = /pattern1/;
-      const handler1 = jest.fn();
+      const handler1 = jest.fn() as (ctx: MessageContext) => Promise<void>;
 
       const account2 = "account2";
       const pattern2 = /pattern2/;
-      const handler2 = jest.fn();
+      const handler2 = jest.fn() as (ctx: MessageContext) => Promise<void>;
 
       service.registerHandler(account1, pattern1, handler1);
       service.registerHandler(account2, pattern2, handler2);
@@ -178,7 +178,7 @@ describe("ReceiveService", () => {
     });
   });
 
-  describe("startReceiving", () => {
+  describe("Receiving", () => {
     const testAccount = "test-account-ws";
     const testApiUrl = "ws://localhost:8080"; // Ensure this matches service's api path
 
@@ -235,6 +235,54 @@ describe("ReceiveService", () => {
       expect(webSocketSpy).not.toHaveBeenCalled();
       expect((service as any).isReceiving).not.toContain(newAccount);
       expect((service as any).accountSockets.has(newAccount)).toBe(false);
+    });
+
+    it("should call handlers if receiving matching message", () => {
+      const account1 = "account1";
+      const pattern1 = /pattern1/;
+      const handler1 = jest.fn() as (ctx: MessageContext) => Promise<void>;
+
+      const account2 = "account2";
+      const pattern2 = /pattern2/;
+      const handler2 = jest.fn() as (ctx: MessageContext) => Promise<void>;
+
+      const message1 = {
+        envelope: {
+          dataMessage: {
+            message: "pattern1",
+          },
+          sourceUuid: "uuid1",
+        },
+        account: account1,
+      };
+
+      service.registerHandler(account1, pattern1, handler1);
+      service.registerHandler(account2, pattern2, handler2);
+
+      service.startReceiving(account1);
+      service.startReceiving(account2);
+
+      let socket1: MockWebSocket = (service as any).accountSockets.get(
+        account1,
+      );
+      socket1.simulateMessage(JSON.stringify(message1));
+
+      expect(handler1).toHaveBeenCalledTimes(1);
+      expect(handler2).not.toHaveBeenCalled();
+    });
+
+    it("should not have active socket if stopReceiving", () => {
+      const account1 = "account1";
+      const pattern1 = /pattern1/;
+      const handler1 = jest.fn() as (ctx: MessageContext) => Promise<void>;
+
+      service.registerHandler(account1, pattern1, handler1);
+      service.startReceiving(account1);
+
+      expect((service as any).accountSockets.size).toBe(1);
+
+      service.stopReceiving(account1);
+      expect((service as any).accountSockets.size).toBe(0);
     });
   });
 });

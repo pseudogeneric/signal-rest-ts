@@ -1,6 +1,6 @@
 {
   "name": "signal-rest-ts",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "typescript wrapper around signal-cli-rest-api",
   "license": "MIT",
   "author": "pseudogeneric",

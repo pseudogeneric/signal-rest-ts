@@ -17,11 +17,23 @@ describe("AccountService", () => {
   beforeEach(() => {
     client = new SignalClient("");
     service = new AccountService(mockApiUrl, client);
+    global.fetch = jest.fn();
     (global.fetch as jest.Mock).mockClear();
   });
 
   // --- getAccounts ---
   describe("getAccounts", () => {
+    it("should throw unknown errors when the unknown happens", () => {
+      global.fetch = jest.fn().mockRejectedValue(new Error("Upsy!"));
+
+      expect(service.deleteUsername(mockNumber)).rejects.toThrow(
+        new ApiServiceError("Upsy!", -1),
+      );
+      expect(service.updateAccountSettings(mockNumber, {})).rejects.toThrow(
+        new ApiServiceError("Upsy!", -1),
+      );
+    });
+
     it("should return account list on successful fetch", async () => {
       const mockAccounts = ["account1", "account2"];
       (global.fetch as jest.Mock).mockResolvedValueOnce({

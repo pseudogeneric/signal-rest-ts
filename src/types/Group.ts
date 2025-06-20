@@ -42,4 +42,11 @@ interface ChangeGroupAdminsRequest {
 
 type GroupList = Group[];
 
-export { Group, GroupList, CreateGroupRequest, CreateGroupResponse, UpdateGroupRequest, ChangeGroupAdminsRequest };
+export {
+  Group,
+  GroupList,
+  CreateGroupRequest,
+  CreateGroupResponse,
+  UpdateGroupRequest,
+  ChangeGroupAdminsRequest,
+};

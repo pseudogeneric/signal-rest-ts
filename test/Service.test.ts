@@ -1,4 +1,5 @@
 // src/service/tests/Service.test.ts
+import { ApiServiceError } from "../src/errors/ApiServiceError";
 import { RestService } from "../src/service/RestService";
 import { SignalClient } from "../src/SignalClient";
 
@@ -16,5 +17,14 @@ describe("Service", () => {
     const newApiUrl = "http://new-api.com";
     service.setAPI(newApiUrl);
     expect(service.getAPI()).toBe(newApiUrl);
+  });
+
+  it("should make a string of argument if not an error", () => {
+    const e = "test";
+    const service = new RestService(initialApiUrl, client);
+
+    expect(() => service.unknownError(e)).toThrow(
+      new ApiServiceError("test", -1),
+    );
   });
 });

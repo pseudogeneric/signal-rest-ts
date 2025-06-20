@@ -1,4 +1,4 @@
 interface APIError {
-    message: string;
-    statusCode: number;
+  message: string;
+  statusCode: number;
 }

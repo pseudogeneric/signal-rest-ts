@@ -4,7 +4,7 @@ class ApiServiceError extends Error {
   constructor(message: string, statusCode: number) {
     super(message);
     this.statusCode = statusCode;
-    this.name = 'ApiServiceError';
+    this.name = "ApiServiceError";
   }
 }
 

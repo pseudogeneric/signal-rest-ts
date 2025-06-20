@@ -17,18 +17,54 @@ describe("MessageService", () => {
   beforeEach(() => {
     client = new SignalClient("");
     service = new MessageService(mockApiUrl, client);
+    global.fetch = jest.fn();
     (global.fetch as jest.Mock).mockClear();
   });
 
+  const mockMessage: SendMessageV2 = {
+    message: "Hello world",
+    recipients: ["+1234567890"],
+    number: "+0987654321",
+  };
+  const mockResponse: SendMessageResponse = {
+    timestamp: "0",
+  };
+
+  const receipt: Receipt = {
+    receipt_type: "read",
+    recipient: "+11111",
+    timestamp: 12345,
+  };
+
+  const react: Reaction = {
+    reaction: ":laughing_while_crying_emoji:",
+    recipient: "+11111",
+    target_author: "author",
+    timestamp: 42,
+  };
+
+  const mockAccount = "+111";
+  const mockRecipient = "+222";
+
   describe("sendMessage", () => {
-    const mockMessage: SendMessageV2 = {
-      message: "Hello world",
-      recipients: ["+1234567890"],
-      number: "+0987654321",
-    };
-    const mockResponse: SendMessageResponse = {
-      timestamp: "0",
-    };
+    it("should unknown error when fetch errors", () => {
+      global.fetch = jest.fn().mockRejectedValue(new Error("Upsy!"));
+
+      expect(service.sendMessage(mockMessage)).rejects.toThrow("Upsy!");
+      expect(service.addReaction(mockAccount, react)).rejects.toThrow("Upsy!");
+      expect(service.removeReaction(mockAccount, react)).rejects.toThrow(
+        "Upsy!",
+      );
+      expect(
+        service.showTypingIndicator(mockAccount, mockRecipient),
+      ).rejects.toThrow("Upsy!");
+      expect(
+        service.hideTypingIndicator(mockAccount, mockRecipient),
+      ).rejects.toThrow("Upsy!");
+      expect(service.sendReadReceipt(mockAccount, receipt)).rejects.toThrow(
+        "Upsy!",
+      );
+    });
 
     it("should return SendMessageResponse on successful POST (201)", async () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -283,13 +319,6 @@ describe("MessageService", () => {
   describe("removeReaction", () => {
     const account = "+22222";
 
-    const react: Reaction = {
-      reaction: ":laughing_while_crying_emoji:",
-      recipient: "+11111",
-      target_author: "author",
-      timestamp: 42,
-    };
-
     it("should return removeReactionResponse on successful DELETE (201)", async () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
@@ -352,12 +381,6 @@ describe("MessageService", () => {
 
   describe("sendReadReceipt", () => {
     const account = "+22222";
-
-    const receipt: Receipt = {
-      receipt_type: "read",
-      recipient: "+11111",
-      timestamp: 12345,
-    };
 
     it("should return sendReadReceiptResponse on successful DELETE (201)", async () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({

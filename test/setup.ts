@@ -55,3 +55,4 @@ if (typeof window !== "undefined" && typeof window.WebSocket === "undefined") {
 }
 
 global.fetch = jest.fn();
+(global as any).WebSocket = BasicMockWebSocket;

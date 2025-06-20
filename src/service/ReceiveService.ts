@@ -111,7 +111,8 @@ class ReceiveService extends RestService {
   stopReceiving = (account: string): void => {
     if (!this.isReceiving.includes(account)) return;
     this.accountSockets.get(account)?.close();
-    this.accountSockets.delete(account);
+    if (this.accountSockets.has(account)) this.accountSockets.delete(account);
+    this.accountSockets.values;
     const listenerIndex = this.isReceiving.findIndex((a) => a === account);
     if (listenerIndex >= 0) this.isReceiving.splice(listenerIndex, 1);
   };

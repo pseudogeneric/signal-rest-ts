@@ -1,5 +1,5 @@
 export interface UpdateProfileRequest {
-    about?: string;
-    base64_avatar?: string;
-    name?: string;
+  about?: string;
+  base64_avatar?: string;
+  name?: string;
 }

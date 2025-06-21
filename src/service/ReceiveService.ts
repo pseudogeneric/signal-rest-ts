@@ -1,4 +1,4 @@
-import { MessageContext } from "../types/Receive";
+import { MessageContext, ReceiveOptions } from "../types/Receive";
 import { RestService } from "./RestService";
 
 type MessageHandler = (ctx: MessageContext) => Promise<void>;
@@ -91,13 +91,28 @@ class ReceiveService extends RestService {
     }
   };
 
-  startReceiving = (account: string): void => {
+  private optionsToUrlString = (options: ReceiveOptions): string => {
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(options)) {
+      params.set(key, value);
+    }
+    return params.toString();
+  };
+
+  startReceiving = (account: string, receiveOptions?: ReceiveOptions): void => {
     if (this.isReceiving.includes(account) || !this.handlerStore.has(account))
       return;
     try {
-      const accountSocket = new WebSocket(
-        this.getAPI() + "/v1/receive/" + account,
-      );
+      let socketPath = this.getAPI() + "/v1/receive/" + account;
+      if (
+        receiveOptions !== undefined &&
+        Object.keys(receiveOptions).length > 0
+      ) {
+        socketPath = socketPath.concat(
+          "?" + this.optionsToUrlString(receiveOptions),
+        );
+      }
+      const accountSocket = new WebSocket(socketPath);
       accountSocket.onmessage = (event: MessageEvent) => {
         this.processMessage(JSON.parse(event.data));
       };

@@ -25,14 +25,7 @@ describe("ReceiveService", () => {
   let mockSignalClient: SignalClient;
   let webSocketSpy: jest.SpyInstance;
 
-  beforeAll(() => {
-    webSocketSpy = jest
-      .spyOn(global, "WebSocket")
-      .mockImplementation((url: string | URL) => {
-        mockWebSocketInstance = new MockWebSocket(url);
-        return mockWebSocketInstance as any;
-      });
-  });
+  beforeAll(() => {});
 
   let mockSendMessageHandler: jest.Mock;
 
@@ -53,6 +46,12 @@ describe("ReceiveService", () => {
     // Clear handlers before each test
     service.clearHandlers();
     jest.clearAllMocks(); // Clear all mocks including global ones like WebSocket and console
+    webSocketSpy = jest
+      .spyOn(global, "WebSocket")
+      .mockImplementation((url: string | URL) => {
+        mockWebSocketInstance = new MockWebSocket(url);
+        return mockWebSocketInstance as any;
+      });
   });
 
   describe("registerHandler", () => {
@@ -183,13 +182,13 @@ describe("ReceiveService", () => {
     const testApiUrl = "ws://localhost:8080"; // Ensure this matches service's api path
 
     beforeEach(() => {
+      jest.clearAllMocks();
       // Reset spy and its default implementation FIRST
-      webSocketSpy.mockClear();
-      webSocketSpy.mockImplementation((url: string | URL) => {
-        mockWebSocketInstance = new MockWebSocket(url);
-        return mockWebSocketInstance as any;
-      });
-      mockWebSocketInstance = null;
+      // webSocketSpy.mockClear();
+      // webSocketSpy.mockImplementation((url: string | URL) => {
+      //   mockWebSocketInstance = new MockWebSocket(url);
+      //   return mockWebSocketInstance as any;
+      // });
 
       // Clear service state
       service.stopAllReceiving();
@@ -204,6 +203,15 @@ describe("ReceiveService", () => {
       // Clean up any running listeners
       service.stopAllReceiving();
       jest.restoreAllMocks(); // Restore any mocks, including console.error if used
+    });
+
+    it("should append options", () => {
+      service.startReceiving(testAccount, {
+        ignore_stories: "true",
+      });
+
+      const expectedUrl = `${testApiUrl}/v1/receive/${testAccount}?ignore_stories=true`;
+      expect(webSocketSpy).toHaveBeenCalledWith(expectedUrl);
     });
 
     it("should create a WebSocket, set onmessage, and update internal state", () => {

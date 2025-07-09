@@ -59,15 +59,30 @@ class ReceiveService extends RestService {
               const createReplyHandler = (
                 account: string,
                 destination: string,
-              ): ((r: string) => Promise<void>) => {
-                return async (r: string) => {
+              ): ((reply_text: string, quote?: boolean) => Promise<void>) => {
+                return async (reply_text: string) => {
                   await this.getClient()
                     ?.message()
                     .sendMessage({
                       number: account,
-                      message: r,
+                      message: reply_text,
                       recipients: [destination],
                     });
+                };
+              };
+
+              const createReactionHandler = (
+                account: string,
+                destination: string,
+                timestamp: number,
+              ): ((emoji: string) => Promise<void>) => {
+                return async (emoji: string) => {
+                  await this.getClient()?.message().addReaction(account, {
+                    reaction: emoji,
+                    recipient: destination,
+                    target_author: destination,
+                    timestamp: timestamp,
+                  });
                 };
               };
 
@@ -79,6 +94,11 @@ class ReceiveService extends RestService {
                 reply: createReplyHandler(
                   message.account,
                   message.envelope.sourceUuid,
+                ),
+                react: createReactionHandler(
+                  message.account,
+                  message.envelope.sourceUuid,
+                  message.envelope.timestamp,
                 ),
                 client: this.getClient(),
               });

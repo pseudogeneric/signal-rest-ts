@@ -15,4 +15,5 @@ export interface MessageContext {
   account: string;
   client?: SignalClient;
   reply: (message: string) => Promise<void>;
+  react: (emoji: string) => Promise<void>;
 }

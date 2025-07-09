@@ -38,6 +38,15 @@ export interface Reaction {
   timestamp: number;
 }
 
+export interface ReactionMessage {
+  emoji?: string;
+  isRemove?: boolean;
+  targetAuthor?: string;
+  targetAuthorNumber?: string;
+  targetAuthorUuid?: string;
+  targetSentTimestamp?: number;
+}
+
 export interface Receipt {
   receipt_type: "read" | "viewed";
   recipient: string;

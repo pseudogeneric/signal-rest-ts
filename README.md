@@ -93,6 +93,14 @@ process.on("SIGINT", () => {
 });
 ```
 
+### Samples
+
+#### LLM React Bot
+
+`samples/deepseek-react-bot.ts` contains a sample of a bot which will send 2% of incoming messages to an LLM endpoint, prompting it to give back one emoji that is representative of the message content, then reacts to the message using that emoji.
+
+####
+
 ### DOM
 
 #### Target

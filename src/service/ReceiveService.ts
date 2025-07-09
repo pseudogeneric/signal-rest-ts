@@ -1,11 +1,9 @@
 import { MessageContext, ReceiveOptions } from "../types/Receive";
 import { RestService } from "./RestService";
 
-type MessageHandler = (ctx: MessageContext) => Promise<void>;
-
 interface MessageHandlerRegistration {
   id: symbol;
-  handler: MessageHandler;
+  handler: (ctx: MessageContext) => Promise<void>;
 }
 
 class ReceiveService extends RestService {
@@ -18,7 +16,7 @@ class ReceiveService extends RestService {
   registerHandler = (
     account: string,
     pattern: RegExp,
-    callback: MessageHandler,
+    callback: (ctx: MessageContext) => Promise<void>,
   ): (() => void) => {
     if (!this.handlerStore.has(account)) {
       this.handlerStore.set(account, new Map());

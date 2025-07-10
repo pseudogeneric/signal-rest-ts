@@ -1,7 +1,7 @@
 // src/service/tests/AboutService.test.ts
 import { AboutService } from "../src/service/AboutService";
 import { AboutInfo } from "../src/types/About";
-import { ApiServiceError } from "../src/errors/ApiServiceError";
+import { SignalApiServiceError } from "../src/errors/SignalApiServiceError";
 import { SignalClient } from "../src/SignalClient";
 import { InstalledStickerPacksResponse } from "../src/types/Sticker";
 import { StickerService } from "../src/service/StickerService";
@@ -44,21 +44,21 @@ describe("AboutService", () => {
       );
     });
 
-    it("should throw ApiServiceError on network error", async () => {
+    it("should throw SignalApiServiceError on network error", async () => {
       const networkError = new Error(
         "Server connection lost while blocking group",
       );
       (global.fetch as jest.Mock).mockRejectedValueOnce(networkError);
 
       await expect(service.getStickerPacks(mockNumber)).rejects.toThrow(
-        new ApiServiceError(networkError.message, -1),
+        new SignalApiServiceError(networkError.message, -1),
       );
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/sticker-packs/${mockNumber}`,
       );
     });
 
-    it("should throw ApiServiceError on API error (e.g. 404 admin not found)", async () => {
+    it("should throw SignalApiServiceError on API error (e.g. 404 admin not found)", async () => {
       const errorMessage = "Group to block not found";
       const errorStatus = 404;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -68,7 +68,7 @@ describe("AboutService", () => {
       });
 
       await expect(service.getStickerPacks(mockNumber)).rejects.toThrow(
-        new ApiServiceError(errorMessage, errorStatus),
+        new SignalApiServiceError(errorMessage, errorStatus),
       );
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/sticker-packs/${mockNumber}`,
@@ -99,7 +99,7 @@ describe("AboutService", () => {
       );
     });
 
-    it("should throw ApiServiceError on network error", async () => {
+    it("should throw SignalApiServiceError on network error", async () => {
       const networkError = new Error(
         "Server connection lost while blocking group",
       );
@@ -107,7 +107,7 @@ describe("AboutService", () => {
 
       await expect(
         service.addStickerPack(mockNumber, mockPackId, mockPackKey),
-      ).rejects.toThrow(new ApiServiceError(networkError.message, -1));
+      ).rejects.toThrow(new SignalApiServiceError(networkError.message, -1));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/sticker-packs/${mockNumber}`,
         {
@@ -117,7 +117,7 @@ describe("AboutService", () => {
       );
     });
 
-    it("should throw ApiServiceError on API error (e.g. 404 admin not found)", async () => {
+    it("should throw SignalApiServiceError on API error (e.g. 404 admin not found)", async () => {
       const errorMessage = "Group to block not found";
       const errorStatus = 404;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -128,7 +128,7 @@ describe("AboutService", () => {
 
       await expect(
         service.addStickerPack(mockNumber, mockPackId, mockPackKey),
-      ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
+      ).rejects.toThrow(new SignalApiServiceError(errorMessage, errorStatus));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/sticker-packs/${mockNumber}`,
         {

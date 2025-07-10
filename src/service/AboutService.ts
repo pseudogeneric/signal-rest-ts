@@ -1,6 +1,6 @@
 import { RestService } from "./RestService";
 import { AboutInfo } from "../types/About";
-import { ApiServiceError } from "../errors/ApiServiceError";
+import { SignalApiServiceError } from "../errors/SignalApiServiceError";
 
 class AboutService extends RestService {
   aboutServer = async (): Promise<AboutInfo> => {
@@ -14,7 +14,7 @@ class AboutService extends RestService {
     if (!response.ok) {
       const errorText = await response.text();
 
-      throw new ApiServiceError(errorText, response.status);
+      throw new SignalApiServiceError(errorText, response.status);
     }
     return response.json() as AboutInfo;
   };

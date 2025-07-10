@@ -6,7 +6,7 @@ import {
   UpdateGroupRequest,
 } from "../types/Group";
 import { RestService } from "./RestService";
-import { ApiServiceError } from "../errors/ApiServiceError";
+import { SignalApiServiceError } from "../errors/SignalApiServiceError";
 
 class GroupService extends RestService {
   getGroup = async (account: string, groupId: string): Promise<Group> => {
@@ -22,7 +22,7 @@ class GroupService extends RestService {
       return (await response.json()) as Group;
     } else {
       const error = await response.text();
-      throw new ApiServiceError(error, response.status);
+      throw new SignalApiServiceError(error, response.status);
     }
   };
 
@@ -37,7 +37,7 @@ class GroupService extends RestService {
       return (await response.json()) as Group[];
     } else {
       const error = await response.text();
-      throw new ApiServiceError(error, response.status);
+      throw new SignalApiServiceError(error, response.status);
     }
   };
 
@@ -58,7 +58,7 @@ class GroupService extends RestService {
       return (await response.json()) as CreateGroupResponse;
     } else {
       const error = await response.text();
-      throw new ApiServiceError(error, response.status);
+      throw new SignalApiServiceError(error, response.status);
     }
   };
 
@@ -76,7 +76,7 @@ class GroupService extends RestService {
     }
     if (!response.ok) {
       const error = await response.text();
-      throw new ApiServiceError(error, response.status);
+      throw new SignalApiServiceError(error, response.status);
     }
   };
 
@@ -94,7 +94,7 @@ class GroupService extends RestService {
     }
     if (!response.ok) {
       const error = await response.text();
-      throw new ApiServiceError(error, response.status);
+      throw new SignalApiServiceError(error, response.status);
     }
   };
 
@@ -113,7 +113,7 @@ class GroupService extends RestService {
 
     if (!response.ok) {
       const error = await response.text();
-      throw new ApiServiceError(error, response.status);
+      throw new SignalApiServiceError(error, response.status);
     }
   };
 
@@ -136,7 +136,7 @@ class GroupService extends RestService {
     }
     if (!response.ok) {
       const error = await response.text();
-      throw new ApiServiceError(error, response.status);
+      throw new SignalApiServiceError(error, response.status);
     }
   };
 
@@ -159,7 +159,7 @@ class GroupService extends RestService {
     }
     if (response.status !== 204) {
       const error = await response.text();
-      throw new ApiServiceError(error, response.status);
+      throw new SignalApiServiceError(error, response.status);
     }
   };
 
@@ -183,7 +183,7 @@ class GroupService extends RestService {
 
     if (!response.ok) {
       const error = await response.text();
-      throw new ApiServiceError(error, response.status);
+      throw new SignalApiServiceError(error, response.status);
     }
   };
 
@@ -207,7 +207,7 @@ class GroupService extends RestService {
 
     if (!response.ok) {
       const error = await response.text();
-      throw new ApiServiceError(error, response.status);
+      throw new SignalApiServiceError(error, response.status);
     }
   };
 
@@ -231,7 +231,7 @@ class GroupService extends RestService {
 
     if (!response.ok) {
       const error = await response.text();
-      throw new ApiServiceError(error, response.status);
+      throw new SignalApiServiceError(error, response.status);
     }
   };
 
@@ -249,7 +249,7 @@ class GroupService extends RestService {
     }
     if (!response.ok) {
       const error = await response.text();
-      throw new ApiServiceError(error, response.status);
+      throw new SignalApiServiceError(error, response.status);
     }
     return (await response.text()) as string;
   };

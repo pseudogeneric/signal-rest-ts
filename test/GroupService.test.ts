@@ -1,6 +1,6 @@
 // src/service/tests/GroupService.test.ts
 import { GroupService } from "../src/service/GroupService";
-import { ApiServiceError } from "../src/errors/ApiServiceError";
+import { SignalApiServiceError } from "../src/errors/SignalApiServiceError";
 import {
   Group,
   CreateGroupRequest,
@@ -47,7 +47,7 @@ describe("GroupService", () => {
       );
     });
 
-    it("should throw ApiServiceError on API error", async () => {
+    it("should throw SignalApiServiceError on API error", async () => {
       const errorMessage = "Group not found";
       const errorStatus = 404;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -57,19 +57,19 @@ describe("GroupService", () => {
       });
 
       await expect(service.getGroup(mockNumber, mockGroupId)).rejects.toThrow(
-        new ApiServiceError(errorMessage, errorStatus),
+        new SignalApiServiceError(errorMessage, errorStatus),
       );
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}`,
       );
     });
 
-    it("should throw ApiServiceError on network error", async () => {
+    it("should throw SignalApiServiceError on network error", async () => {
       const networkError = new Error("Connection timeout");
       (global.fetch as jest.Mock).mockRejectedValueOnce(networkError);
 
       await expect(service.getGroup(mockNumber, mockGroupId)).rejects.toThrow(
-        new ApiServiceError(networkError.message, -1),
+        new SignalApiServiceError(networkError.message, -1),
       );
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}`,
@@ -111,7 +111,7 @@ describe("GroupService", () => {
       );
     });
 
-    it("should throw ApiServiceError on API error", async () => {
+    it("should throw SignalApiServiceError on API error", async () => {
       const errorMessage = "Failed to fetch groups";
       const errorStatus = 500;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -121,19 +121,19 @@ describe("GroupService", () => {
       });
 
       await expect(service.getGroups(mockNumber)).rejects.toThrow(
-        new ApiServiceError(errorMessage, errorStatus),
+        new SignalApiServiceError(errorMessage, errorStatus),
       );
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}`,
       );
     });
 
-    it("should throw ApiServiceError on network error", async () => {
+    it("should throw SignalApiServiceError on network error", async () => {
       const networkError = new Error("Network unavailable");
       (global.fetch as jest.Mock).mockRejectedValueOnce(networkError);
 
       await expect(service.getGroups(mockNumber)).rejects.toThrow(
-        new ApiServiceError(networkError.message, -1),
+        new SignalApiServiceError(networkError.message, -1),
       );
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}`,
@@ -168,7 +168,7 @@ describe("GroupService", () => {
       );
     });
 
-    it("should throw ApiServiceError on API error (e.g., 400 bad request)", async () => {
+    it("should throw SignalApiServiceError on API error (e.g., 400 bad request)", async () => {
       const errorMessage = "Invalid group data";
       const errorStatus = 400;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -179,7 +179,7 @@ describe("GroupService", () => {
 
       await expect(
         service.createGroup(mockNumber, groupRequest),
-      ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
+      ).rejects.toThrow(new SignalApiServiceError(errorMessage, errorStatus));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}`,
         {
@@ -189,13 +189,13 @@ describe("GroupService", () => {
       );
     });
 
-    it("should throw ApiServiceError on network error", async () => {
+    it("should throw SignalApiServiceError on network error", async () => {
       const networkError = new Error("Failed to connect");
       (global.fetch as jest.Mock).mockRejectedValueOnce(networkError);
 
       await expect(
         service.createGroup(mockNumber, groupRequest),
-      ).rejects.toThrow(new ApiServiceError(networkError.message, -1));
+      ).rejects.toThrow(new SignalApiServiceError(networkError.message, -1));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}`,
         {
@@ -225,7 +225,7 @@ describe("GroupService", () => {
       );
     });
 
-    it("should throw ApiServiceError if status is not 204", async () => {
+    it("should throw SignalApiServiceError if status is not 204", async () => {
       const errorMessage = "Failed to quit group";
       const errorStatus = 403; // e.g. forbidden
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -235,7 +235,7 @@ describe("GroupService", () => {
       });
 
       await expect(service.quitGroup(mockNumber, mockGroupId)).rejects.toThrow(
-        new ApiServiceError(errorMessage, errorStatus),
+        new SignalApiServiceError(errorMessage, errorStatus),
       );
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/quit`,
@@ -245,7 +245,7 @@ describe("GroupService", () => {
       );
     });
 
-    it("should throw ApiServiceError on other API error", async () => {
+    it("should throw SignalApiServiceError on other API error", async () => {
       const errorMessage = "Group not found to quit";
       const errorStatus = 404;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -255,7 +255,7 @@ describe("GroupService", () => {
       });
 
       await expect(service.quitGroup(mockNumber, mockGroupId)).rejects.toThrow(
-        new ApiServiceError(errorMessage, errorStatus),
+        new SignalApiServiceError(errorMessage, errorStatus),
       );
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/quit`,
@@ -265,12 +265,12 @@ describe("GroupService", () => {
       );
     });
 
-    it("should throw ApiServiceError on network error", async () => {
+    it("should throw SignalApiServiceError on network error", async () => {
       const networkError = new Error("Network issue");
       (global.fetch as jest.Mock).mockRejectedValueOnce(networkError);
 
       await expect(service.quitGroup(mockNumber, mockGroupId)).rejects.toThrow(
-        new ApiServiceError(networkError.message, -1),
+        new SignalApiServiceError(networkError.message, -1),
       );
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/quit`,
@@ -300,7 +300,7 @@ describe("GroupService", () => {
       );
     });
 
-    it("should throw ApiServiceError if status is not 204", async () => {
+    it("should throw SignalApiServiceError if status is not 204", async () => {
       const errorMessage = "Failed to delete";
       const errorStatus = 403;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -311,7 +311,7 @@ describe("GroupService", () => {
 
       await expect(
         service.deleteGroup(mockNumber, mockGroupId),
-      ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
+      ).rejects.toThrow(new SignalApiServiceError(errorMessage, errorStatus));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}`,
         {
@@ -320,7 +320,7 @@ describe("GroupService", () => {
       );
     });
 
-    it("should throw ApiServiceError on API error (e.g. 404 not found)", async () => {
+    it("should throw SignalApiServiceError on API error (e.g. 404 not found)", async () => {
       const errorMessage = "Group to delete not found";
       const errorStatus = 404;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -331,7 +331,7 @@ describe("GroupService", () => {
 
       await expect(
         service.deleteGroup(mockNumber, mockGroupId),
-      ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
+      ).rejects.toThrow(new SignalApiServiceError(errorMessage, errorStatus));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}`,
         {
@@ -340,13 +340,13 @@ describe("GroupService", () => {
       );
     });
 
-    it("should throw ApiServiceError on network error", async () => {
+    it("should throw SignalApiServiceError on network error", async () => {
       const networkError = new Error("Server unreachable");
       (global.fetch as jest.Mock).mockRejectedValueOnce(networkError);
 
       await expect(
         service.deleteGroup(mockNumber, mockGroupId),
-      ).rejects.toThrow(new ApiServiceError(networkError.message, -1));
+      ).rejects.toThrow(new SignalApiServiceError(networkError.message, -1));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}`,
         {
@@ -378,7 +378,7 @@ describe("GroupService", () => {
       );
     });
 
-    it("should throw ApiServiceError if status is not 204", async () => {
+    it("should throw SignalApiServiceError if status is not 204", async () => {
       const errorMessage = "Update failed";
       const errorStatus = 400;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -389,7 +389,7 @@ describe("GroupService", () => {
 
       await expect(
         service.updateGroup(mockNumber, mockGroupId, updateRequest),
-      ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
+      ).rejects.toThrow(new SignalApiServiceError(errorMessage, errorStatus));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}`,
         {
@@ -399,7 +399,7 @@ describe("GroupService", () => {
       );
     });
 
-    it("should throw ApiServiceError on API error (e.g. 403 forbidden)", async () => {
+    it("should throw SignalApiServiceError on API error (e.g. 403 forbidden)", async () => {
       const errorMessage = "Permission denied for update";
       const errorStatus = 403;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -410,7 +410,7 @@ describe("GroupService", () => {
 
       await expect(
         service.updateGroup(mockNumber, mockGroupId, updateRequest),
-      ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
+      ).rejects.toThrow(new SignalApiServiceError(errorMessage, errorStatus));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}`,
         {
@@ -420,13 +420,13 @@ describe("GroupService", () => {
       );
     });
 
-    it("should throw ApiServiceError on network error", async () => {
+    it("should throw SignalApiServiceError on network error", async () => {
       const networkError = new Error("Update request failed");
       (global.fetch as jest.Mock).mockRejectedValueOnce(networkError);
 
       await expect(
         service.updateGroup(mockNumber, mockGroupId, updateRequest),
-      ).rejects.toThrow(new ApiServiceError(networkError.message, -1));
+      ).rejects.toThrow(new SignalApiServiceError(networkError.message, -1));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}`,
         {
@@ -459,7 +459,7 @@ describe("GroupService", () => {
       );
     });
 
-    it("should throw ApiServiceError if status is not 204", async () => {
+    it("should throw SignalApiServiceError if status is not 204", async () => {
       const errorMessage = "Failed to add admin";
       const errorStatus = 400;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -470,7 +470,7 @@ describe("GroupService", () => {
 
       await expect(
         service.addAdmins(mockNumber, mockGroupId, adminRequest),
-      ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
+      ).rejects.toThrow(new SignalApiServiceError(errorMessage, errorStatus));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/admins`,
         {
@@ -480,7 +480,7 @@ describe("GroupService", () => {
       );
     });
 
-    it("should throw ApiServiceError on API error (e.g. 409 conflict)", async () => {
+    it("should throw SignalApiServiceError on API error (e.g. 409 conflict)", async () => {
       const errorMessage = "Admin already exists or user not member";
       const errorStatus = 409;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -491,7 +491,7 @@ describe("GroupService", () => {
 
       await expect(
         service.addAdmins(mockNumber, mockGroupId, adminRequest),
-      ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
+      ).rejects.toThrow(new SignalApiServiceError(errorMessage, errorStatus));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/admins`,
         {
@@ -501,13 +501,13 @@ describe("GroupService", () => {
       );
     });
 
-    it("should throw ApiServiceError on network error", async () => {
+    it("should throw SignalApiServiceError on network error", async () => {
       const networkError = new Error("Could not reach server to add admin");
       (global.fetch as jest.Mock).mockRejectedValueOnce(networkError);
 
       await expect(
         service.addAdmins(mockNumber, mockGroupId, adminRequest),
-      ).rejects.toThrow(new ApiServiceError(networkError.message, -1));
+      ).rejects.toThrow(new SignalApiServiceError(networkError.message, -1));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/admins`,
         {
@@ -542,7 +542,7 @@ describe("GroupService", () => {
       );
     });
 
-    it("should throw ApiServiceError if status is not 204", async () => {
+    it("should throw SignalApiServiceError if status is not 204", async () => {
       const errorMessage = "Failed to delete admin";
       const errorStatus = 400;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -553,7 +553,7 @@ describe("GroupService", () => {
 
       await expect(
         service.removeAdmins(mockNumber, mockGroupId, adminRequest),
-      ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
+      ).rejects.toThrow(new SignalApiServiceError(errorMessage, errorStatus));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/admins`,
         {
@@ -563,7 +563,7 @@ describe("GroupService", () => {
       );
     });
 
-    it("should throw ApiServiceError on API error (e.g. 404 admin not found)", async () => {
+    it("should throw SignalApiServiceError on API error (e.g. 404 admin not found)", async () => {
       const errorMessage = "Admin to delete not found in group";
       const errorStatus = 404;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -574,7 +574,7 @@ describe("GroupService", () => {
 
       await expect(
         service.removeAdmins(mockNumber, mockGroupId, adminRequest),
-      ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
+      ).rejects.toThrow(new SignalApiServiceError(errorMessage, errorStatus));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/admins`,
         {
@@ -584,7 +584,7 @@ describe("GroupService", () => {
       );
     });
 
-    it("should throw ApiServiceError on network error", async () => {
+    it("should throw SignalApiServiceError on network error", async () => {
       const networkError = new Error(
         "Server connection lost while deleting admin",
       );
@@ -592,7 +592,7 @@ describe("GroupService", () => {
 
       await expect(
         service.removeAdmins(mockNumber, mockGroupId, adminRequest),
-      ).rejects.toThrow(new ApiServiceError(networkError.message, -1));
+      ).rejects.toThrow(new SignalApiServiceError(networkError.message, -1));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/admins`,
         {
@@ -621,14 +621,14 @@ describe("GroupService", () => {
       );
     });
 
-    it("should throw ApiServiceError on network error", async () => {
+    it("should throw SignalApiServiceError on network error", async () => {
       const networkError = new Error(
         "Server connection lost while blocking group",
       );
       (global.fetch as jest.Mock).mockRejectedValueOnce(networkError);
 
       await expect(service.blockGroup(mockNumber, mockGroupId)).rejects.toThrow(
-        new ApiServiceError(networkError.message, -1),
+        new SignalApiServiceError(networkError.message, -1),
       );
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/block`,
@@ -638,7 +638,7 @@ describe("GroupService", () => {
       );
     });
 
-    it("should throw ApiServiceError on API error (e.g. 404 admin not found)", async () => {
+    it("should throw SignalApiServiceError on API error (e.g. 404 admin not found)", async () => {
       const errorMessage = "Group to block not found";
       const errorStatus = 404;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -648,7 +648,7 @@ describe("GroupService", () => {
       });
 
       await expect(service.blockGroup(mockNumber, mockGroupId)).rejects.toThrow(
-        new ApiServiceError(errorMessage, errorStatus),
+        new SignalApiServiceError(errorMessage, errorStatus),
       );
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/block`,
@@ -676,7 +676,7 @@ describe("GroupService", () => {
       );
     });
 
-    it("should throw ApiServiceError on network error", async () => {
+    it("should throw SignalApiServiceError on network error", async () => {
       const networkError = new Error(
         "Server connection lost while blocking group",
       );
@@ -684,13 +684,13 @@ describe("GroupService", () => {
 
       await expect(
         service.getGroupAvatar(mockNumber, mockGroupId),
-      ).rejects.toThrow(new ApiServiceError(networkError.message, -1));
+      ).rejects.toThrow(new SignalApiServiceError(networkError.message, -1));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/avatar`,
       );
     });
 
-    it("should throw ApiServiceError on API error (e.g. 404 admin not found)", async () => {
+    it("should throw SignalApiServiceError on API error (e.g. 404 admin not found)", async () => {
       const errorMessage = "Group to block not found";
       const errorStatus = 404;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -701,7 +701,7 @@ describe("GroupService", () => {
 
       await expect(
         service.getGroupAvatar(mockNumber, mockGroupId),
-      ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
+      ).rejects.toThrow(new SignalApiServiceError(errorMessage, errorStatus));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/avatar`,
       );
@@ -729,7 +729,7 @@ describe("GroupService", () => {
       );
     });
 
-    it("should throw ApiServiceError on network error", async () => {
+    it("should throw SignalApiServiceError on network error", async () => {
       const networkError = new Error(
         "Server connection lost while blocking group",
       );
@@ -737,7 +737,7 @@ describe("GroupService", () => {
 
       await expect(
         service.addMembers(mockNumber, mockGroupId, members),
-      ).rejects.toThrow(new ApiServiceError(networkError.message, -1));
+      ).rejects.toThrow(new SignalApiServiceError(networkError.message, -1));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/members`,
         {
@@ -747,7 +747,7 @@ describe("GroupService", () => {
       );
     });
 
-    it("should throw ApiServiceError on API error (e.g. 404 admin not found)", async () => {
+    it("should throw SignalApiServiceError on API error (e.g. 404 admin not found)", async () => {
       const errorMessage = "Group to block not found";
       const errorStatus = 404;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -758,7 +758,7 @@ describe("GroupService", () => {
 
       await expect(
         service.addMembers(mockNumber, mockGroupId, members),
-      ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
+      ).rejects.toThrow(new SignalApiServiceError(errorMessage, errorStatus));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/members`,
         {
@@ -790,7 +790,7 @@ describe("GroupService", () => {
       );
     });
 
-    it("should throw ApiServiceError on network error", async () => {
+    it("should throw SignalApiServiceError on network error", async () => {
       const networkError = new Error(
         "Server connection lost while blocking group",
       );
@@ -798,7 +798,7 @@ describe("GroupService", () => {
 
       await expect(
         service.removeMembers(mockNumber, mockGroupId, members),
-      ).rejects.toThrow(new ApiServiceError(networkError.message, -1));
+      ).rejects.toThrow(new SignalApiServiceError(networkError.message, -1));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/members`,
         {
@@ -808,7 +808,7 @@ describe("GroupService", () => {
       );
     });
 
-    it("should throw ApiServiceError on API error (e.g. 404 admin not found)", async () => {
+    it("should throw SignalApiServiceError on API error (e.g. 404 admin not found)", async () => {
       const errorMessage = "Group to block not found";
       const errorStatus = 404;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -819,7 +819,7 @@ describe("GroupService", () => {
 
       await expect(
         service.removeMembers(mockNumber, mockGroupId, members),
-      ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
+      ).rejects.toThrow(new SignalApiServiceError(errorMessage, errorStatus));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/groups/${mockNumber}/${mockGroupId}/members`,
         {

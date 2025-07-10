@@ -1,6 +1,6 @@
 // src/service/tests/AccountService.test.ts
 import { AccountService } from "../src/service/AccountService";
-import { ApiServiceError } from "../src/errors/ApiServiceError";
+import { SignalApiServiceError } from "../src/errors/SignalApiServiceError";
 import {
   SetPinRequest,
   UpdateAccountSettingsRequest,
@@ -27,10 +27,10 @@ describe("AccountService", () => {
       global.fetch = jest.fn().mockRejectedValue(new Error("Upsy!"));
 
       expect(service.deleteUsername(mockNumber)).rejects.toThrow(
-        new ApiServiceError("Upsy!", -1),
+        new SignalApiServiceError("Upsy!", -1),
       );
       expect(service.updateAccountSettings(mockNumber, {})).rejects.toThrow(
-        new ApiServiceError("Upsy!", -1),
+        new SignalApiServiceError("Upsy!", -1),
       );
     });
 
@@ -47,7 +47,7 @@ describe("AccountService", () => {
       expect(global.fetch).toHaveBeenCalledWith(`${mockApiUrl}/v1/accounts`);
     });
 
-    it("should throw ApiServiceError on API error", async () => {
+    it("should throw SignalApiServiceError on API error", async () => {
       const errorMessage = "Failed to fetch accounts";
       const errorStatus = 500;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -57,17 +57,17 @@ describe("AccountService", () => {
       });
 
       await expect(service.getAccounts()).rejects.toThrow(
-        new ApiServiceError(errorMessage, errorStatus),
+        new SignalApiServiceError(errorMessage, errorStatus),
       );
       expect(global.fetch).toHaveBeenCalledWith(`${mockApiUrl}/v1/accounts`);
     });
 
-    it("should throw ApiServiceError on network error", async () => {
+    it("should throw SignalApiServiceError on network error", async () => {
       const networkError = new Error("Network down");
       (global.fetch as jest.Mock).mockRejectedValueOnce(networkError);
 
       await expect(service.getAccounts()).rejects.toThrow(
-        new ApiServiceError(networkError.message, -1),
+        new SignalApiServiceError(networkError.message, -1),
       );
       expect(global.fetch).toHaveBeenCalledWith(`${mockApiUrl}/v1/accounts`);
     });
@@ -99,7 +99,7 @@ describe("AccountService", () => {
       );
     });
 
-    it("should throw ApiServiceError on API error", async () => {
+    it("should throw SignalApiServiceError on API error", async () => {
       const errorMessage = "Failed to set username";
       const errorStatus = 400;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -109,7 +109,7 @@ describe("AccountService", () => {
       });
 
       await expect(service.setUsername(mockNumber, newName)).rejects.toThrow(
-        new ApiServiceError(errorMessage, errorStatus),
+        new SignalApiServiceError(errorMessage, errorStatus),
       );
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/accounts/${mockNumber}/username`,
@@ -120,7 +120,7 @@ describe("AccountService", () => {
       );
     });
 
-    it("should throw ApiServiceError on network error", async () => {
+    it("should throw SignalApiServiceError on network error", async () => {
       const networkError = new Error("Network failed");
       (global.fetch as jest.Mock).mockRejectedValueOnce(networkError);
 
@@ -128,7 +128,7 @@ describe("AccountService", () => {
         await service.setUsername(mockNumber, newName);
         fail("Expected to throw");
       } catch (error) {
-        expect(error).toBeInstanceOf(ApiServiceError);
+        expect(error).toBeInstanceOf(SignalApiServiceError);
         // expect(error.message).toBe(networkError.message);
         // expect(error.statusCode).toBe(-1);
       }
@@ -160,7 +160,7 @@ describe("AccountService", () => {
         );
       });
 
-      it("should throw ApiServiceError if status is not 204", async () => {
+      it("should throw SignalApiServiceError if status is not 204", async () => {
         const errorMessage = "Delete failed";
         const errorStatus = 400;
         (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -170,7 +170,7 @@ describe("AccountService", () => {
         });
 
         await expect(service.deleteUsername(mockNumber)).rejects.toThrow(
-          new ApiServiceError(errorMessage, errorStatus),
+          new SignalApiServiceError(errorMessage, errorStatus),
         );
         expect(global.fetch).toHaveBeenCalledWith(
           `${mockApiUrl}/v1/accounts/${mockNumber}/username`,
@@ -180,7 +180,7 @@ describe("AccountService", () => {
         );
       });
 
-      it("should throw ApiServiceError on API error", async () => {
+      it("should throw SignalApiServiceError on API error", async () => {
         const errorMessage = "Failed to delete username";
         const errorStatus = 500;
         (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -190,7 +190,7 @@ describe("AccountService", () => {
         });
 
         await expect(service.deleteUsername(mockNumber)).rejects.toThrow(
-          new ApiServiceError(errorMessage, errorStatus),
+          new SignalApiServiceError(errorMessage, errorStatus),
         );
         expect(global.fetch).toHaveBeenCalledWith(
           `${mockApiUrl}/v1/accounts/${mockNumber}/username`,
@@ -226,7 +226,7 @@ describe("AccountService", () => {
         );
       });
 
-      it("should throw ApiServiceError if status is not 204", async () => {
+      it("should throw SignalApiServiceError if status is not 204", async () => {
         const errorMessage = "Update failed";
         const errorStatus = 400;
         (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -237,7 +237,7 @@ describe("AccountService", () => {
 
         await expect(
           service.updateAccountSettings(mockNumber, settings),
-        ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
+        ).rejects.toThrow(new SignalApiServiceError(errorMessage, errorStatus));
         expect(global.fetch).toHaveBeenCalledWith(
           `${mockApiUrl}/v1/accounts/${mockNumber}/settings`,
           {
@@ -247,7 +247,7 @@ describe("AccountService", () => {
         );
       });
 
-      it("should throw ApiServiceError on API error", async () => {
+      it("should throw SignalApiServiceError on API error", async () => {
         const errorMessage = "Failed to update settings";
         const errorStatus = 500;
         (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -258,7 +258,7 @@ describe("AccountService", () => {
 
         await expect(
           service.updateAccountSettings(mockNumber, settings),
-        ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
+        ).rejects.toThrow(new SignalApiServiceError(errorMessage, errorStatus));
         expect(global.fetch).toHaveBeenCalledWith(
           `${mockApiUrl}/v1/accounts/${mockNumber}/settings`,
           {
@@ -290,7 +290,7 @@ describe("AccountService", () => {
         );
       });
 
-      it("should throw ApiServiceError if status is not 204", async () => {
+      it("should throw SignalApiServiceError if status is not 204", async () => {
         const errorMessage = "Set PIN failed";
         const errorStatus = 400;
         (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -300,7 +300,7 @@ describe("AccountService", () => {
         });
 
         await expect(service.setPin(mockNumber, pinRequest)).rejects.toThrow(
-          new ApiServiceError(errorMessage, errorStatus),
+          new SignalApiServiceError(errorMessage, errorStatus),
         );
         expect(global.fetch).toHaveBeenCalledWith(
           `${mockApiUrl}/v1/accounts/${mockNumber}/pin`,
@@ -311,7 +311,7 @@ describe("AccountService", () => {
         );
       });
 
-      it("should throw ApiServiceError on API error", async () => {
+      it("should throw SignalApiServiceError on API error", async () => {
         const errorMessage = "Failed to set PIN";
         const errorStatus = 500;
         (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -321,7 +321,7 @@ describe("AccountService", () => {
         });
 
         await expect(service.setPin(mockNumber, pinRequest)).rejects.toThrow(
-          new ApiServiceError(errorMessage, errorStatus),
+          new SignalApiServiceError(errorMessage, errorStatus),
         );
         expect(global.fetch).toHaveBeenCalledWith(
           `${mockApiUrl}/v1/accounts/${mockNumber}/pin`,
@@ -332,12 +332,12 @@ describe("AccountService", () => {
         );
       });
 
-      it("should throw ApiServiceError on network error", async () => {
+      it("should throw SignalApiServiceError on network error", async () => {
         const networkError = new Error("Network failed");
         (global.fetch as jest.Mock).mockRejectedValueOnce(networkError);
 
         await expect(service.setPin(mockNumber, pinRequest)).rejects.toThrow(
-          new ApiServiceError(networkError.message, -1),
+          new SignalApiServiceError(networkError.message, -1),
         );
         expect(global.fetch).toHaveBeenCalledWith(
           `${mockApiUrl}/v1/accounts/${mockNumber}/pin`,
@@ -366,7 +366,7 @@ describe("AccountService", () => {
         );
       });
 
-      it("should throw ApiServiceError if status is not 204", async () => {
+      it("should throw SignalApiServiceError if status is not 204", async () => {
         const errorMessage = "Remove PIN failed";
         const errorStatus = 400;
         (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -376,7 +376,7 @@ describe("AccountService", () => {
         });
 
         await expect(service.removePin(mockNumber)).rejects.toThrow(
-          new ApiServiceError(errorMessage, errorStatus),
+          new SignalApiServiceError(errorMessage, errorStatus),
         );
         expect(global.fetch).toHaveBeenCalledWith(
           `${mockApiUrl}/v1/accounts/${mockNumber}/pin`,
@@ -386,7 +386,7 @@ describe("AccountService", () => {
         );
       });
 
-      it("should throw ApiServiceError on API error", async () => {
+      it("should throw SignalApiServiceError on API error", async () => {
         const errorMessage = "Failed to remove PIN";
         const errorStatus = 500;
         (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -396,7 +396,7 @@ describe("AccountService", () => {
         });
 
         await expect(service.removePin(mockNumber)).rejects.toThrow(
-          new ApiServiceError(errorMessage, errorStatus),
+          new SignalApiServiceError(errorMessage, errorStatus),
         );
         expect(global.fetch).toHaveBeenCalledWith(
           `${mockApiUrl}/v1/accounts/${mockNumber}/pin`,
@@ -406,12 +406,12 @@ describe("AccountService", () => {
         );
       });
 
-      it("should throw ApiServiceError on network error", async () => {
+      it("should throw SignalApiServiceError on network error", async () => {
         const networkError = new Error("Network failed");
         (global.fetch as jest.Mock).mockRejectedValueOnce(networkError);
 
         await expect(service.removePin(mockNumber)).rejects.toThrow(
-          new ApiServiceError(networkError.message, -1),
+          new SignalApiServiceError(networkError.message, -1),
         );
         expect(global.fetch).toHaveBeenCalledWith(
           `${mockApiUrl}/v1/accounts/${mockNumber}/pin`,

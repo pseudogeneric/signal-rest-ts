@@ -129,10 +129,14 @@ location ~/signal-api/(.*)$ {
 }
 ```
 
+## Running Tests
+
+To run the test suite you can simply use the npm task "test": `npm run test`
+
 ## Contributions
 
-Contributions are welcome.
+Contributions are welcome. To contribute, fork the repo and make your changes, then open a pull request on [this repository](https://github.com/pseudogeneric/signal-rest-ts).
 
 ## License
 
-Released as-is under MIT license with no warranties
+Released as-is under MIT license with no warranties.

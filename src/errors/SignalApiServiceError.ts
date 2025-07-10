@@ -1,11 +1,11 @@
-class ApiServiceError extends Error {
+class SignalApiServiceError extends Error {
   statusCode: number;
 
   constructor(message: string, statusCode: number) {
     super(message);
     this.statusCode = statusCode;
-    this.name = "ApiServiceError";
+    this.name = "SignalApiServiceError";
   }
 }
 
-export { ApiServiceError };
+export { SignalApiServiceError };

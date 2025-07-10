@@ -1,5 +1,5 @@
 import { RestService } from "./RestService";
-import { ApiServiceError } from "../errors/ApiServiceError";
+import { SignalApiServiceError } from "../errors/SignalApiServiceError";
 import { UpdateProfileRequest } from "../types/Profile";
 
 class ProfileService extends RestService {
@@ -19,7 +19,7 @@ class ProfileService extends RestService {
 
     if (response.status !== 204) {
       const error = await response.text();
-      throw new ApiServiceError(error, response.status);
+      throw new SignalApiServiceError(error, response.status);
     }
   };
 }

@@ -1,6 +1,6 @@
 // src/service/tests/MessageService.test.ts
 import { MessageService } from "../src/service/MessageService";
-import { ApiServiceError } from "../src/errors/ApiServiceError";
+import { SignalApiServiceError } from "../src/errors/SignalApiServiceError";
 import {
   SendMessageV2,
   SendMessageResponse,
@@ -81,7 +81,7 @@ describe("MessageService", () => {
       });
     });
 
-    it("should throw ApiServiceError if status is not 201 (e.g. 400)", async () => {
+    it("should throw SignalApiServiceError if status is not 201 (e.g. 400)", async () => {
       const errorMessage = "Bad Request";
       const errorStatus = 400;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -91,7 +91,7 @@ describe("MessageService", () => {
       });
 
       await expect(service.sendMessage(mockMessage)).rejects.toThrow(
-        new ApiServiceError(errorMessage, errorStatus),
+        new SignalApiServiceError(errorMessage, errorStatus),
       );
       expect(global.fetch).toHaveBeenCalledWith(`${mockApiUrl}/v2/send`, {
         method: "POST",
@@ -99,7 +99,7 @@ describe("MessageService", () => {
       });
     });
 
-    it("should throw ApiServiceError on other API error (e.g. 500)", async () => {
+    it("should throw SignalApiServiceError on other API error (e.g. 500)", async () => {
       const errorMessage = "Internal Server Error";
       const errorStatus = 500;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -109,7 +109,7 @@ describe("MessageService", () => {
       });
 
       await expect(service.sendMessage(mockMessage)).rejects.toThrow(
-        new ApiServiceError(errorMessage, errorStatus),
+        new SignalApiServiceError(errorMessage, errorStatus),
       );
       expect(global.fetch).toHaveBeenCalledWith(`${mockApiUrl}/v2/send`, {
         method: "POST",
@@ -139,7 +139,7 @@ describe("MessageService", () => {
       );
     });
 
-    it("should throw ApiServiceError if status is not 201 (e.g. 400)", async () => {
+    it("should throw SignalApiServiceError if status is not 201 (e.g. 400)", async () => {
       const errorMessage = "Bad Request";
       const errorStatus = 400;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -150,7 +150,7 @@ describe("MessageService", () => {
 
       await expect(
         service.showTypingIndicator(account, recipient),
-      ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
+      ).rejects.toThrow(new SignalApiServiceError(errorMessage, errorStatus));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/typing-indicator/${account}`,
         {
@@ -160,7 +160,7 @@ describe("MessageService", () => {
       );
     });
 
-    it("should throw ApiServiceError on other API error (e.g. 500)", async () => {
+    it("should throw SignalApiServiceError on other API error (e.g. 500)", async () => {
       const errorMessage = "Internal Server Error";
       const errorStatus = 500;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -171,7 +171,7 @@ describe("MessageService", () => {
 
       await expect(
         service.showTypingIndicator(account, recipient),
-      ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
+      ).rejects.toThrow(new SignalApiServiceError(errorMessage, errorStatus));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/typing-indicator/${account}`,
         {
@@ -203,7 +203,7 @@ describe("MessageService", () => {
       );
     });
 
-    it("should throw ApiServiceError if status is not 201 (e.g. 400)", async () => {
+    it("should throw SignalApiServiceError if status is not 201 (e.g. 400)", async () => {
       const errorMessage = "Bad Request";
       const errorStatus = 400;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -214,7 +214,7 @@ describe("MessageService", () => {
 
       await expect(
         service.hideTypingIndicator(account, recipient),
-      ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
+      ).rejects.toThrow(new SignalApiServiceError(errorMessage, errorStatus));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/typing-indicator/${account}`,
         {
@@ -224,7 +224,7 @@ describe("MessageService", () => {
       );
     });
 
-    it("should throw ApiServiceError on other API error (e.g. 500)", async () => {
+    it("should throw SignalApiServiceError on other API error (e.g. 500)", async () => {
       const errorMessage = "Internal Server Error";
       const errorStatus = 500;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -235,7 +235,7 @@ describe("MessageService", () => {
 
       await expect(
         service.hideTypingIndicator(account, recipient),
-      ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
+      ).rejects.toThrow(new SignalApiServiceError(errorMessage, errorStatus));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/typing-indicator/${account}`,
         {
@@ -273,7 +273,7 @@ describe("MessageService", () => {
       );
     });
 
-    it("should throw ApiServiceError if status is not 201 (e.g. 400)", async () => {
+    it("should throw SignalApiServiceError if status is not 201 (e.g. 400)", async () => {
       const errorMessage = "Bad Request";
       const errorStatus = 400;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -283,7 +283,7 @@ describe("MessageService", () => {
       });
 
       await expect(service.addReaction(account, react)).rejects.toThrow(
-        new ApiServiceError(errorMessage, errorStatus),
+        new SignalApiServiceError(errorMessage, errorStatus),
       );
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/reactions/${account}`,
@@ -294,7 +294,7 @@ describe("MessageService", () => {
       );
     });
 
-    it("should throw ApiServiceError on other API error (e.g. 500)", async () => {
+    it("should throw SignalApiServiceError on other API error (e.g. 500)", async () => {
       const errorMessage = "Internal Server Error";
       const errorStatus = 500;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -304,7 +304,7 @@ describe("MessageService", () => {
       });
 
       await expect(service.addReaction(account, react)).rejects.toThrow(
-        new ApiServiceError(errorMessage, errorStatus),
+        new SignalApiServiceError(errorMessage, errorStatus),
       );
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/reactions/${account}`,
@@ -336,7 +336,7 @@ describe("MessageService", () => {
       );
     });
 
-    it("should throw ApiServiceError if status is not 201 (e.g. 400)", async () => {
+    it("should throw SignalApiServiceError if status is not 201 (e.g. 400)", async () => {
       const errorMessage = "Bad Request";
       const errorStatus = 400;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -346,7 +346,7 @@ describe("MessageService", () => {
       });
 
       await expect(service.removeReaction(account, react)).rejects.toThrow(
-        new ApiServiceError(errorMessage, errorStatus),
+        new SignalApiServiceError(errorMessage, errorStatus),
       );
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/reactions/${account}`,
@@ -357,7 +357,7 @@ describe("MessageService", () => {
       );
     });
 
-    it("should throw ApiServiceError on other API error (e.g. 500)", async () => {
+    it("should throw SignalApiServiceError on other API error (e.g. 500)", async () => {
       const errorMessage = "Internal Server Error";
       const errorStatus = 500;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -367,7 +367,7 @@ describe("MessageService", () => {
       });
 
       await expect(service.removeReaction(account, react)).rejects.toThrow(
-        new ApiServiceError(errorMessage, errorStatus),
+        new SignalApiServiceError(errorMessage, errorStatus),
       );
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/reactions/${account}`,
@@ -399,7 +399,7 @@ describe("MessageService", () => {
       );
     });
 
-    it("should throw ApiServiceError if status is not 201 (e.g. 400)", async () => {
+    it("should throw SignalApiServiceError if status is not 201 (e.g. 400)", async () => {
       const errorMessage = "Bad Request";
       const errorStatus = 400;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -409,7 +409,7 @@ describe("MessageService", () => {
       });
 
       await expect(service.sendReadReceipt(account, receipt)).rejects.toThrow(
-        new ApiServiceError(errorMessage, errorStatus),
+        new SignalApiServiceError(errorMessage, errorStatus),
       );
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/receipts/${account}`,
@@ -420,7 +420,7 @@ describe("MessageService", () => {
       );
     });
 
-    it("should throw ApiServiceError on other API error (e.g. 500)", async () => {
+    it("should throw SignalApiServiceError on other API error (e.g. 500)", async () => {
       const errorMessage = "Internal Server Error";
       const errorStatus = 500;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -430,7 +430,7 @@ describe("MessageService", () => {
       });
 
       await expect(service.sendReadReceipt(account, receipt)).rejects.toThrow(
-        new ApiServiceError(errorMessage, errorStatus),
+        new SignalApiServiceError(errorMessage, errorStatus),
       );
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/receipts/${account}`,

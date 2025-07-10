@@ -5,7 +5,7 @@ import {
   SendMessageV2,
 } from "../types/Message";
 import { RestService } from "./RestService";
-import { ApiServiceError } from "../errors/ApiServiceError";
+import { SignalApiServiceError } from "../errors/SignalApiServiceError";
 
 class MessageService extends RestService {
   sendMessage = async (
@@ -23,7 +23,7 @@ class MessageService extends RestService {
 
     if (!response.ok) {
       const error = await response.text();
-      throw new ApiServiceError(error, response.status);
+      throw new SignalApiServiceError(error, response.status);
     }
     return (await response.json()) as SendMessageResponse;
   };
@@ -46,7 +46,7 @@ class MessageService extends RestService {
     }
     if (!response.ok) {
       const error = await response.text();
-      throw new ApiServiceError(error, response.status);
+      throw new SignalApiServiceError(error, response.status);
     }
   };
 
@@ -68,7 +68,7 @@ class MessageService extends RestService {
     }
     if (!response.ok) {
       const error = await response.text();
-      throw new ApiServiceError(error, response.status);
+      throw new SignalApiServiceError(error, response.status);
     }
   };
 
@@ -85,7 +85,7 @@ class MessageService extends RestService {
 
     if (!response.ok) {
       const error = await response?.text();
-      throw new ApiServiceError(error, response?.status);
+      throw new SignalApiServiceError(error, response?.status);
     }
   };
 
@@ -105,7 +105,7 @@ class MessageService extends RestService {
 
     if (!response.ok) {
       const error = await response?.text();
-      throw new ApiServiceError(error, response?.status);
+      throw new SignalApiServiceError(error, response?.status);
     }
   };
 
@@ -125,7 +125,7 @@ class MessageService extends RestService {
 
     if (!response.ok) {
       const error = await response?.text();
-      throw new ApiServiceError(error, response?.status);
+      throw new SignalApiServiceError(error, response?.status);
     }
   };
 }

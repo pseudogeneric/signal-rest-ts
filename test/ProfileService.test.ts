@@ -1,6 +1,6 @@
 // src/service/tests/ProfileService.test.ts
 import { ProfileService } from "../src/service/ProfileService";
-import { ApiServiceError } from "../src/errors/ApiServiceError";
+import { SignalApiServiceError } from "../src/errors/SignalApiServiceError";
 import { SignalClient } from "../src/SignalClient";
 
 // Mock type, as it's not defined in the provided snippet for ProfileService.ts
@@ -46,7 +46,7 @@ describe("ProfileService", () => {
       );
     });
 
-    it("should throw ApiServiceError if status is not 204 (e.g. 401 Unauthorized)", async () => {
+    it("should throw SignalApiServiceError if status is not 204 (e.g. 401 Unauthorized)", async () => {
       const errorMessage = "Unauthorized";
       const errorStatus = 401;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -57,7 +57,7 @@ describe("ProfileService", () => {
 
       await expect(
         service.updateProfile(mockUserNumber, mockProfileUpdate),
-      ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
+      ).rejects.toThrow(new SignalApiServiceError(errorMessage, errorStatus));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/profiles/${mockUserNumber}`,
         {
@@ -67,7 +67,7 @@ describe("ProfileService", () => {
       );
     });
 
-    it("should throw ApiServiceError on server error (e.g. 500)", async () => {
+    it("should throw SignalApiServiceError on server error (e.g. 500)", async () => {
       const errorMessage = "Internal Server Error";
       const errorStatus = 500;
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -78,7 +78,7 @@ describe("ProfileService", () => {
 
       await expect(
         service.updateProfile(mockUserNumber, mockProfileUpdate),
-      ).rejects.toThrow(new ApiServiceError(errorMessage, errorStatus));
+      ).rejects.toThrow(new SignalApiServiceError(errorMessage, errorStatus));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/profiles/${mockUserNumber}`,
         {
@@ -88,13 +88,13 @@ describe("ProfileService", () => {
       );
     });
 
-    it("should throw ApiServiceError on network error", async () => {
+    it("should throw SignalApiServiceError on network error", async () => {
       const networkError = new Error("Server is down");
       (global.fetch as jest.Mock).mockRejectedValueOnce(networkError);
 
       await expect(
         service.updateProfile(mockUserNumber, mockProfileUpdate),
-      ).rejects.toThrow(new ApiServiceError(networkError.message, -1));
+      ).rejects.toThrow(new SignalApiServiceError(networkError.message, -1));
       expect(global.fetch).toHaveBeenCalledWith(
         `${mockApiUrl}/v1/profiles/${mockUserNumber}`,
         {

@@ -1,5 +1,5 @@
 import { RestService } from "./RestService";
-import { ApiServiceError } from "../errors/ApiServiceError";
+import { SignalApiServiceError } from "../errors/SignalApiServiceError";
 import { InstalledStickerPacksResponse } from "../types/Sticker";
 
 class StickerService extends RestService {
@@ -14,7 +14,7 @@ class StickerService extends RestService {
     }
     if (!response.ok) {
       const error = await response.text();
-      throw new ApiServiceError(error, response.status);
+      throw new SignalApiServiceError(error, response.status);
     }
     return (await response.json()) as InstalledStickerPacksResponse[];
   };
@@ -35,7 +35,7 @@ class StickerService extends RestService {
     }
     if (!response.ok) {
       const error = await response.text();
-      throw new ApiServiceError(error, response.status);
+      throw new SignalApiServiceError(error, response.status);
     }
   };
 }

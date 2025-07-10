@@ -1,4 +1,4 @@
-import { ApiServiceError } from "../errors/ApiServiceError";
+import { SignalApiServiceError } from "../errors/SignalApiServiceError";
 import { SignalClient } from "../SignalClient";
 
 class RestService {
@@ -35,7 +35,7 @@ class RestService {
         message = String(e);
       }
     }
-    throw new ApiServiceError(message, -1);
+    throw new SignalApiServiceError(message, -1);
   };
 }
 

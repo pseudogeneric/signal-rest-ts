@@ -52,5 +52,37 @@ describe("AboutService", () => {
       );
       expect(global.fetch).toHaveBeenCalledWith(`${mockApiUrl}/v1/about`);
     });
+
+    it("should return true on successful fetch", async () => {
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        status: 204,
+      });
+
+      const result = await service.healthCheck();
+      expect(result).toBeTruthy();
+      expect(global.fetch).toHaveBeenCalledWith(`${mockApiUrl}/v1/health`);
+    });
+
+    it("should throw SignalApiServiceError on API error when checking health", async () => {
+      const errorMessage = "Internal Server Error";
+      const errorStatus = 500;
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: errorStatus,
+        text: async () => errorMessage,
+      });
+
+      await expect(service.healthCheck()).resolves.toBeFalsy();
+      expect(global.fetch).toHaveBeenCalledWith(`${mockApiUrl}/v1/health`);
+    });
+
+    it("should throw SignalApiServiceError on network error when checking health", async () => {
+      const networkError = new Error("Network failed");
+      (global.fetch as jest.Mock).mockRejectedValueOnce(networkError);
+
+      await expect(service.healthCheck()).resolves.toBeFalsy();
+      expect(global.fetch).toHaveBeenCalledWith(`${mockApiUrl}/v1/health`);
+    });
   });
 });

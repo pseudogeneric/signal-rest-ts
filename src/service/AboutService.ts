@@ -18,6 +18,16 @@ class AboutService extends RestService {
     }
     return response.json() as AboutInfo;
   };
+
+  healthCheck = async (): Promise<boolean> => {
+    let response;
+    try {
+      response = await fetch(this.getAPI() + "/v1/health");
+    } catch (e) {
+      return false;
+    }
+    return response.status === 204;
+  };
 }
 
 export { AboutService };

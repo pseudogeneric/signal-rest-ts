@@ -40,6 +40,12 @@ class ReceiveService extends RestService {
     };
   };
 
+  private internalIdToGroup(internalId: string) {
+    const b64encode = (i: string): string =>
+      Buffer.from(i, "ascii").toString("base64");
+    return `group.${b64encode(internalId)}`;
+  }
+
   clearHandlers = (): void => {
     this.handlerStore = new Map();
   };
@@ -54,17 +60,24 @@ class ReceiveService extends RestService {
         if (pattern instanceof RegExp && pattern.test(dm.message)) {
           Promise.all(
             handlerRegistry.map((patternHandler) => {
-              const createReplyHandler = (
-                account: string,
-                destination: string,
-              ): ((reply_text: string, quote?: boolean) => Promise<void>) => {
-                return async (reply_text: string) => {
+              const createReplyHandler = (): ((
+                reply_text: string,
+                base64_attachments?: string[],
+              ) => Promise<void>) => {
+                const destination =
+                  message.envelope.dataMessage.groupInfo !== undefined
+                    ? this.internalIdToGroup(
+                        message.envelope.dataMessage.groupInfo.groupId!,
+                      )
+                    : message.envelope.sourceUuid;
+                return async (text: string, attachments?: string[]) => {
                   await this.getClient()
                     ?.message()
                     .sendMessage({
-                      number: account,
-                      message: reply_text,
+                      number: message.account,
+                      message: text,
                       recipients: [destination],
+                      base64_attachments: attachments,
                     });
                 };
               };
@@ -89,10 +102,7 @@ class ReceiveService extends RestService {
                 account: message.account,
                 sourceUuid: message.envelope.sourceUuid,
                 rawMessage: message,
-                reply: createReplyHandler(
-                  message.account,
-                  message.envelope.sourceUuid,
-                ),
+                reply: createReplyHandler(),
                 react: createReactionHandler(
                   message.account,
                   message.envelope.sourceUuid,

@@ -40,6 +40,12 @@ class ReceiveService extends RestService {
     };
   };
 
+  private internalIdToGroupId(internalId: string) {
+    const b64encode = (i: string): string =>
+      Buffer.from(i, "ascii").toString("base64");
+    return `group.${b64encode(internalId)}`;
+  }
+
   clearHandlers = (): void => {
     this.handlerStore = new Map();
   };
@@ -54,33 +60,46 @@ class ReceiveService extends RestService {
         if (pattern instanceof RegExp && pattern.test(dm.message)) {
           Promise.all(
             handlerRegistry.map((patternHandler) => {
-              const createReplyHandler = (
-                account: string,
-                destination: string,
-              ): ((reply_text: string, quote?: boolean) => Promise<void>) => {
-                return async (reply_text: string) => {
+              const createReplyHandler = (): ((
+                reply_text: string,
+                base64_attachments?: string[],
+              ) => Promise<void>) => {
+                const destination =
+                  message.envelope.dataMessage.groupInfo !== undefined
+                    ? this.internalIdToGroupId(
+                        message.envelope.dataMessage.groupInfo.groupId!,
+                      )
+                    : message.envelope.sourceUuid;
+                return async (text: string, attachments?: string[]) => {
                   await this.getClient()
                     ?.message()
                     .sendMessage({
-                      number: account,
-                      message: reply_text,
+                      number: message.account,
+                      message: text,
                       recipients: [destination],
+                      base64_attachments: attachments,
                     });
                 };
               };
 
-              const createReactionHandler = (
-                account: string,
-                destination: string,
-                timestamp: number,
-              ): ((emoji: string) => Promise<void>) => {
+              const createReactionHandler = (): ((
+                emoji: string,
+              ) => Promise<void>) => {
+                const destination =
+                  message.envelope.dataMessage.groupInfo !== undefined
+                    ? this.internalIdToGroupId(
+                        message.envelope.dataMessage.groupInfo.groupId!,
+                      )
+                    : message.envelope.sourceUuid;
                 return async (emoji: string) => {
-                  await this.getClient()?.message().addReaction(account, {
-                    reaction: emoji,
-                    recipient: destination,
-                    target_author: destination,
-                    timestamp: timestamp,
-                  });
+                  await this.getClient()
+                    ?.message()
+                    .addReaction(message.account, {
+                      reaction: emoji,
+                      recipient: destination,
+                      target_author: destination,
+                      timestamp: message.envelope.timestamp,
+                    });
                 };
               };
 
@@ -89,15 +108,8 @@ class ReceiveService extends RestService {
                 account: message.account,
                 sourceUuid: message.envelope.sourceUuid,
                 rawMessage: message,
-                reply: createReplyHandler(
-                  message.account,
-                  message.envelope.sourceUuid,
-                ),
-                react: createReactionHandler(
-                  message.account,
-                  message.envelope.sourceUuid,
-                  message.envelope.timestamp,
-                ),
+                reply: createReplyHandler(),
+                react: createReactionHandler(),
                 client: this.getClient(),
               });
             }),

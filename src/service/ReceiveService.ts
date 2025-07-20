@@ -40,7 +40,7 @@ class ReceiveService extends RestService {
     };
   };
 
-  private internalIdToGroup(internalId: string) {
+  private internalIdToGroupId(internalId: string) {
     const b64encode = (i: string): string =>
       Buffer.from(i, "ascii").toString("base64");
     return `group.${b64encode(internalId)}`;
@@ -66,7 +66,7 @@ class ReceiveService extends RestService {
               ) => Promise<void>) => {
                 const destination =
                   message.envelope.dataMessage.groupInfo !== undefined
-                    ? this.internalIdToGroup(
+                    ? this.internalIdToGroupId(
                         message.envelope.dataMessage.groupInfo.groupId!,
                       )
                     : message.envelope.sourceUuid;
@@ -82,18 +82,24 @@ class ReceiveService extends RestService {
                 };
               };
 
-              const createReactionHandler = (
-                account: string,
-                destination: string,
-                timestamp: number,
-              ): ((emoji: string) => Promise<void>) => {
+              const createReactionHandler = (): ((
+                emoji: string,
+              ) => Promise<void>) => {
+                const destination =
+                  message.envelope.dataMessage.groupInfo !== undefined
+                    ? this.internalIdToGroupId(
+                        message.envelope.dataMessage.groupInfo.groupId!,
+                      )
+                    : message.envelope.sourceUuid;
                 return async (emoji: string) => {
-                  await this.getClient()?.message().addReaction(account, {
-                    reaction: emoji,
-                    recipient: destination,
-                    target_author: destination,
-                    timestamp: timestamp,
-                  });
+                  await this.getClient()
+                    ?.message()
+                    .addReaction(message.account, {
+                      reaction: emoji,
+                      recipient: destination,
+                      target_author: destination,
+                      timestamp: message.envelope.timestamp,
+                    });
                 };
               };
 
@@ -103,11 +109,7 @@ class ReceiveService extends RestService {
                 sourceUuid: message.envelope.sourceUuid,
                 rawMessage: message,
                 reply: createReplyHandler(),
-                react: createReactionHandler(
-                  message.account,
-                  message.envelope.sourceUuid,
-                  message.envelope.timestamp,
-                ),
+                react: createReactionHandler(),
                 client: this.getClient(),
               });
             }),

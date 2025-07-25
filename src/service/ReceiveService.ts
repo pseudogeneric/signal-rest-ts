@@ -78,6 +78,8 @@ class ReceiveService extends RestService {
                       message: text,
                       recipients: [destination],
                       base64_attachments: attachments,
+                      quote_author: message.envelope.sourceUuid,
+                      quote_timestamp: message.envelope.timestamp,
                     });
                 };
               };

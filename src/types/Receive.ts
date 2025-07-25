@@ -14,6 +14,6 @@ export interface MessageContext {
   rawMessage: object; // type this out..
   account: string;
   client?: SignalClient;
-  reply: (message: string) => Promise<void>;
+  reply: (message: string, attachments?: string[]) => Promise<void>;
   react: (emoji: string) => Promise<void>;
 }

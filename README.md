@@ -99,7 +99,9 @@ process.on("SIGINT", () => {
 
 `samples/deepseek-react-bot.ts` contains a sample of a bot which will send 2% of incoming messages to an LLM endpoint, prompting it to give back one emoji that is representative of the message content, then reacts to the message using that emoji.
 
-####
+#### NPR Hourly News
+
+`samples/npr-hourly-news.ts` is a sample script that shows how to handle commands, use the contextual reply method, and handle attachments. When the script is running, if a user types `!npr` the bot will fetch the podcast feed, download the latest episode, and reply with it attached.
 
 ### DOM
 

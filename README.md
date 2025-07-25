@@ -6,20 +6,16 @@
 
 ## Installation
 
+### npm
+
 ```sh
 npm install signal-rest-ts
 ```
 
 ## Usage
 
-### Notes
-
-<picture>
-  <img src="https://g.l5.ca/warning.svg" alt="warning icon"
-  height="25" width="25" />
-</picture>
-
-In order to use the Receive service, **signal-cli-rest-api** should be ran in `json-rpc` mode.
+> [!IMPORTANT]
+> In order to use the Receive service, **signal-cli-rest-api** should be ran in `json-rpc` mode.
 
 ### As a module
 
@@ -98,16 +94,6 @@ process.on("SIGINT", () => {
 });
 ```
 
-### Samples
-
-#### LLM React Bot
-
-`samples/deepseek-react-bot.ts` contains a sample of a bot which will send 2% of incoming messages to an LLM endpoint, prompting it to give back one emoji that is representative of the message content, then reacts to the message using that emoji.
-
-#### NPR Hourly News
-
-`samples/npr-hourly-news.ts` is a sample script that shows how to handle commands, use the contextual reply method, and handle attachments. When the script is running, if a user types `!npr` the bot will fetch the podcast feed, download the latest episode, and reply with it attached.
-
 ### DOM
 
 #### Target
@@ -135,6 +121,16 @@ location ~/signal-api/(.*)$ {
   add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
 }
 ```
+
+## Samples
+
+### LLM React Bot
+
+`samples/deepseek-react-bot.ts` provides examples for receiving and reacting to messages using the context react method. This sample utilizes DeepSeek and reacts to ~2% of messages with an emoji representative of the message's content.
+
+### NPR Hourly News
+
+`samples/npr-hourly-news.ts` is a sample script that shows how to handle commands, use the contextual reply method, and handle attachments. When the script is running, if a user types `!npr` the bot will fetch the podcast feed, download the latest episode, and reply with it attached.
 
 ## Running Tests
 

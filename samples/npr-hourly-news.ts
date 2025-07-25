@@ -17,31 +17,37 @@ const app = async () => {
 
   signal
     .receive()
-    .registerHandler(accounts[0], /^!npr\s*$/, async (c: MessageContext) => {
-      const pod = await (await fetch(NPR_NEWS)).text();
-      const lastBuildMatch = pod.match(/<lastBuildDate>(.*?)<\/lastBuildDate>/);
-      const newBuild = lastBuildMatch ? lastBuildMatch[1] : "";
+    .registerHandler(
+      accounts[0],
+      /^!npr\s*$/,
+      async (context: MessageContext) => {
+        const feed = await (await fetch(NPR_NEWS)).text();
+        const lastBuildMatch = feed.match(
+          /<lastBuildDate>(.*?)<\/lastBuildDate>/,
+        );
+        const newBuild = lastBuildMatch ? lastBuildMatch[1] : "";
 
-      if (lastBuild !== "" && newBuild === lastBuild) {
-        c.reply(lastPodTitle, [lastPod]);
-      } else {
-        const podcast = await parseFeedToJson(pod);
-        const latestEpisodePath: string =
-          podcast.rss.channel.item[0].enclosure?.at(0)?.["@_url"] || "";
-        const latestEpisode = await (await fetch(latestEpisodePath)).bytes();
-        const title = podcast.rss.channel.item[0].title || "";
-        const mediaType =
-          podcast.rss.channel.item[0].enclosure?.at(0)?.["@_type"] || "";
+        if (lastBuild !== "" && newBuild === lastBuild) {
+          context.reply(lastPodTitle, [lastPod]);
+        } else {
+          const podcast = await parseFeedToJson(feed);
+          const latestEpisodePath: string =
+            podcast.rss.channel.item[0].enclosure?.at(0)?.["@_url"] || "";
+          const latestEpisode = await (await fetch(latestEpisodePath)).bytes();
+          const title = podcast.rss.channel.item[0].title || "";
+          const mediaType =
+            podcast.rss.channel.item[0].enclosure?.at(0)?.["@_type"] || "";
 
-        const attachment = `data:${mediaType};filename=episode.mp3;base64,${b64encode(
-          latestEpisode,
-        )}`;
-        lastBuild = newBuild;
-        lastPod = attachment;
-        lastPodTitle = title;
-        c.reply(title, [attachment]);
-      }
-    });
+          const attachment = `data:${mediaType};filename=episode.mp3;base64,${b64encode(
+            latestEpisode,
+          )}`;
+          lastBuild = newBuild;
+          lastPod = attachment;
+          lastPodTitle = title;
+          context.reply(title, [attachment]);
+        }
+      },
+    );
 
   signal.receive().startReceiving(accounts[0]);
 };

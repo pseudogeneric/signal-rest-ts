@@ -14,6 +14,11 @@ npm install signal-rest-ts
 
 ### Notes
 
+<picture>
+  <img src="https://g.l5.ca/warning.svg" alt="warning icon"
+  height="25" width="25" />
+</picture>
+
 In order to use the Receive service, **signal-cli-rest-api** should be ran in `json-rpc` mode.
 
 ### As a module

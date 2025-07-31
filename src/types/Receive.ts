@@ -13,6 +13,7 @@ export interface MessageContext {
   sourceUuid: string;
   rawMessage: object; // type this out..
   account: string;
+  replyTo: string; // where reply or react handlers will respond (user if DM, group if group)
   client?: SignalClient;
   reply: (message: string, attachments?: string[]) => Promise<void>;
   react: (emoji: string) => Promise<void>;

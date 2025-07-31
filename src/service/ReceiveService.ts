@@ -56,6 +56,13 @@ class ReceiveService extends RestService {
       const patternMap: Map<RegExp, MessageHandlerRegistration[]> =
         this.handlerStore.get(message.account) || new Map();
 
+      const destination =
+        message.envelope.dataMessage.groupInfo !== undefined
+          ? this.internalIdToGroupId(
+              message.envelope.dataMessage.groupInfo.groupId!,
+            )
+          : message.envelope.sourceUuid;
+
       patternMap.forEach((handlerRegistry, pattern) => {
         if (pattern instanceof RegExp && pattern.test(dm.message)) {
           Promise.all(
@@ -64,12 +71,6 @@ class ReceiveService extends RestService {
                 reply_text: string,
                 base64_attachments?: string[],
               ) => Promise<void>) => {
-                const destination =
-                  message.envelope.dataMessage.groupInfo !== undefined
-                    ? this.internalIdToGroupId(
-                        message.envelope.dataMessage.groupInfo.groupId!,
-                      )
-                    : message.envelope.sourceUuid;
                 return async (text: string, attachments?: string[]) => {
                   await this.getClient()
                     ?.message()
@@ -87,12 +88,6 @@ class ReceiveService extends RestService {
               const createReactionHandler = (): ((
                 emoji: string,
               ) => Promise<void>) => {
-                const destination =
-                  message.envelope.dataMessage.groupInfo !== undefined
-                    ? this.internalIdToGroupId(
-                        message.envelope.dataMessage.groupInfo.groupId!,
-                      )
-                    : message.envelope.sourceUuid;
                 return async (emoji: string) => {
                   await this.getClient()
                     ?.message()
@@ -110,6 +105,7 @@ class ReceiveService extends RestService {
                 account: message.account,
                 sourceUuid: message.envelope.sourceUuid,
                 rawMessage: message,
+                replyTo: destination,
                 reply: createReplyHandler(),
                 react: createReactionHandler(),
                 client: this.getClient(),

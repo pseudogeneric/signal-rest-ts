@@ -50,73 +50,96 @@ class ReceiveService extends RestService {
     this.handlerStore = new Map();
   };
 
-  private processMessage = (message: any) => {
-    if (message.envelope && message.envelope.dataMessage) {
-      const dm = message.envelope.dataMessage;
-      const patternMap: Map<RegExp, MessageHandlerRegistration[]> =
-        this.handlerStore.get(message.account) || new Map();
+  private processMessage = (incoming: any) => {
+    const envelope = incoming.envelope;
+    if (!envelope) return;
 
-      const destination =
-        message.envelope.dataMessage.groupInfo !== undefined
-          ? this.internalIdToGroupId(
-              message.envelope.dataMessage.groupInfo.groupId!,
-            )
-          : message.envelope.sourceUuid;
+    const dataMessage = envelope.dataMessage;
+    const sentSyncMessage = envelope.syncMessage?.sentMessage;
+    const messageBody = dataMessage?.message ?? sentSyncMessage?.message;
+    if (!messageBody) return;
 
-      patternMap.forEach((handlerRegistry, pattern) => {
-        if (pattern instanceof RegExp && pattern.test(dm.message)) {
-          Promise.all(
-            handlerRegistry.map((patternHandler) => {
-              const createReplyHandler = (): ((
-                reply_text: string,
-                base64_attachments?: string[],
-              ) => Promise<void>) => {
-                return async (text: string, attachments?: string[]) => {
-                  await this.getClient()
-                    ?.message()
-                    .sendMessage({
-                      number: message.account,
-                      message: text,
-                      recipients: [destination],
-                      base64_attachments: attachments,
-                      quote_author: message.envelope.sourceUuid,
-                      quote_timestamp: message.envelope.timestamp,
-                    });
-                };
-              };
+    const patternMap: Map<RegExp, MessageHandlerRegistration[]> =
+      this.handlerStore.get(incoming.account) || new Map();
 
-              const createReactionHandler = (): ((
-                emoji: string,
-              ) => Promise<void>) => {
-                return async (emoji: string) => {
-                  await this.getClient()
-                    ?.message()
-                    .addReaction(message.account, {
-                      reaction: emoji,
-                      recipient: destination,
-                      target_author: destination,
-                      timestamp: message.envelope.timestamp,
-                    });
-                };
-              };
-
-              patternHandler.handler({
-                message: dm.message,
-                account: message.account,
-                sourceUuid: message.envelope.sourceUuid,
-                rawMessage: message,
-                replyTo: destination,
-                reply: createReplyHandler(),
-                react: createReactionHandler(),
-                client: this.getClient(),
-              });
-            }),
-          ).catch((error) => {
-            console.error(error);
-          });
-        }
-      });
+    let destination: string;
+    if (dataMessage?.groupInfo !== undefined) {
+      destination = this.internalIdToGroupId(dataMessage.groupInfo.groupId!);
+    } else if (dataMessage) {
+      destination = envelope.sourceUuid;
+    } else if (sentSyncMessage?.groupInfo?.groupId) {
+      destination = this.internalIdToGroupId(sentSyncMessage.groupInfo.groupId);
+    } else if (sentSyncMessage?.destinationUuid) {
+      destination = sentSyncMessage.destinationUuid;
+    } else if (sentSyncMessage?.destinationNumber) {
+      destination = sentSyncMessage.destinationNumber;
+    } else {
+      destination = envelope.sourceUuid ?? incoming.account;
     }
+
+    const quoteAuthor = dataMessage
+      ? envelope.sourceUuid
+      : (sentSyncMessage?.destinationUuid ?? destination);
+    const messageTimestamp = dataMessage
+      ? envelope.timestamp
+      : (sentSyncMessage?.timestamp ?? envelope.timestamp);
+    const sourceUuid = dataMessage
+      ? envelope.sourceUuid
+      : (sentSyncMessage?.destinationUuid ??
+        envelope.sourceUuid ??
+        incoming.account);
+
+    patternMap.forEach((handlerRegistry, pattern) => {
+      if (!(pattern instanceof RegExp) || !pattern.test(messageBody)) return;
+
+      Promise.all(
+        handlerRegistry.map((patternHandler) => {
+          const createReplyHandler = (): ((
+            reply_text: string,
+            base64_attachments?: string[],
+          ) => Promise<void>) => {
+            return async (text: string, attachments?: string[]) => {
+              await this.getClient()
+                ?.message()
+                .sendMessage({
+                  number: incoming.account,
+                  message: text,
+                  recipients: [destination],
+                  base64_attachments: attachments,
+                  quote_author: quoteAuthor,
+                  quote_timestamp: messageTimestamp,
+                });
+            };
+          };
+
+          const createReactionHandler = (): ((
+            emoji: string,
+          ) => Promise<void>) => {
+            return async (emoji: string) => {
+              await this.getClient()?.message().addReaction(incoming.account, {
+                reaction: emoji,
+                recipient: destination,
+                target_author: destination,
+                timestamp: messageTimestamp,
+              });
+            };
+          };
+
+          return patternHandler.handler({
+            message: messageBody,
+            account: incoming.account,
+            sourceUuid,
+            rawMessage: incoming,
+            replyTo: destination,
+            reply: createReplyHandler(),
+            react: createReactionHandler(),
+            client: this.getClient(),
+          });
+        }),
+      ).catch((error) => {
+        console.error(error);
+      });
+    });
   };
 
   private optionsToUrlString = (options: ReceiveOptions): string => {

@@ -58,6 +58,8 @@ const sendMeAMessage = async () => {
 #### Reply to messages matching a regular expression
 
 ```typescript
+import { SignalClient } from "signal-rest-ts";
+
 const signal = new SignalClient("http://localhost:8080");
 const accounts = await signal.account().getAccounts();
 

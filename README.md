@@ -31,7 +31,7 @@ const getAllGroups = async () => {
   const groups = await Promise.all(
     accounts.map(async (a) => {
       return await signal.group().getGroups(a);
-    });
+    })
   );
 
   console.log(groups);

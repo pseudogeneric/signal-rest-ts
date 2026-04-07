@@ -23,7 +23,7 @@
   "scripts": {
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "build": "node build.mjs",
+    "build": "node build.mjs && tsc -p tsconfig.json --emitDeclarationOnly",
     "types": "tsc -p tsconfig.json --emitDeclarationOnly",
     "clean": "rm -rf dist/",
     "prepare": "husky"

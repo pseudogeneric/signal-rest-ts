@@ -5,6 +5,7 @@ import { MessageService } from "./service/MessageService";
 import { ProfileService } from "./service/ProfileService";
 import { ReceiveService } from "./service/ReceiveService";
 import { StickerService } from "./service/StickerService";
+import { IdentityService } from "./service/IdentityService";
 
 export class SignalClient {
   private apiPath: string;
@@ -14,6 +15,7 @@ export class SignalClient {
   private groupService?: GroupService;
   private messageService?: MessageService;
   private profileService?: ProfileService;
+  private identityService?: IdentityService;
   private receiveService?: ReceiveService;
   private stickerService?: StickerService;
 
@@ -54,6 +56,13 @@ export class SignalClient {
       this.profileService = new ProfileService(this.apiPath, this);
     }
     return this.profileService;
+  };
+
+  identity = (): IdentityService => {
+    if (this.identityService === undefined) {
+      this.identityService = new IdentityService(this.apiPath, this);
+    }
+    return this.identityService;
   };
 
   receive = (): ReceiveService => {

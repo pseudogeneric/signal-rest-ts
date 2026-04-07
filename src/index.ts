@@ -7,3 +7,4 @@ export * from "./types/Message";
 export * from "./types/Profile";
 export * from "./types/Receive";
 export * from "./types/Sticker";
+export * from "./types/Identity";
